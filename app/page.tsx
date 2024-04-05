@@ -6,7 +6,6 @@ import Footer from '@/components/layouts/Footer'
 import ChatBox from '@/components/layouts/ChatBox'
 import { firebaseRealtimeDatabase, firebaseAuth } from '@/firebase'
 import { signInAnonymously } from 'firebase/auth'
-import { v4 } from 'uuid'
 import { IMessage } from '@/interfaces/message'
 
 
@@ -16,9 +15,9 @@ const Home: FC = () => {
 
   return (
     <div className={styles._container__daibl}>
-      <Header mode={'daibl'} />
+      {/* <Header mode={'daibl'} />
       <ChatBox mode={'daibl'} messages={messages} />
-      <Footer mode={'daibl'} />
+      <Footer mode={'daibl'} /> */}
     </div>
   )
 }
