@@ -1,0 +1,39 @@
+@import ../../variables/variables
+
+._container__daibl,
+._container__gemini
+    align-items: center
+    column-gap: 8px
+    font-size: 14px
+    font-weight: 500
+
+    ._generating
+        align-items: center
+        column-gap: 5px
+
+        svg
+            font-size: 20px
+            animation: generate 1000ms linear infinite
+
+    ._complete
+        align-items: center
+        column-gap: 5px
+
+        svg
+            font-size: 15px
+
+@keyframes generate
+    0%
+        transform: rotate(0)
+    100%
+        transform: rotate(360deg)
+
+._container__daibl
+    ._generating, ._complete
+        svg
+            color: $daibl-color
+
+._container__gemini
+    ._generating, ._complete
+        svg
+            color: $gemini-color

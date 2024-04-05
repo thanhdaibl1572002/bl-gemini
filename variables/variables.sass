@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap')
+
+$main-font-family: 'Inter'
+$logo-font-family: 'Black Ops One'
+
+$daibl-color: rgb(42, 112, 248)
+$gemini-color: rgb(119, 44, 232)
+$white-color: rgb(255, 255, 255)
+$black-color: rgb(30, 39, 46)
+$red-color: rgb(255, 56, 56)
+
+$white-gradient-color: linear-gradient( 109.6deg,  rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1% )
+$black-gradient-color: linear-gradient( 109.6deg,  rgba(20,30,48,1) 11.2%, rgba(36,59,85,1) 91.1% )
+$daibl-gradient-color: linear-gradient( 249.1deg,  rgba(11,206,250,1) -6.5%, rgba(65,46,248,1) 100.2% )
+$gemini-gradient-color: linear-gradient( 109.6deg,  rgba(119,44,232,0.68) 11.5%, rgba(119,44,232,1) 91.2% )
+
+@function get-color-level($color, $level: 100)
+  @if $level < 0 or $level > 100
+    @error "Mức độ màu phải nằm trong khoảng từ 0 đến 100"
+  $alpha: $level / 100
+  @return rgba($color, $alpha)

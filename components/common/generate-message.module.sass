@@ -1,0 +1,109 @@
+@import ../../variables/variables
+
+._container__daibl,
+._container__gemini
+    width: 100%
+    justify-content: flex-start
+    flex-direction: column
+    row-gap: 5px
+    position: relative
+
+    ._content
+        color: $black-color
+        width: fit-content
+        max-width: 85%
+        padding: 12px 10px
+        border-radius: 10px
+        line-height: 25px
+        position: relative
+        overflow-x: scroll 
+
+        ._text
+            display: inline-flex
+            flex-direction: column
+            row-gap: 15px
+            font-size: 15px
+            max-width: 100%
+
+            h2
+                font-size: 15px
+                font-weight: 400
+
+            ul, ol
+                flex-direction: column
+                row-gap: 15px
+
+            li
+                flex-direction: column
+                row-gap: 5px
+
+            p
+                flex-direction: column
+                row-gap: 5px
+
+            strong
+                font-weight: 600  
+                font-size: 16px
+
+            table
+                border-collapse: collapse
+
+                th, td 
+                    padding: 8px
+                    text-align: left
+                td
+                    font-size: 14px
+            
+            code, pre
+                max-width: 100% !important
+                white-space: pre-wrap !important
+        
+                span
+                    display: unset
+
+    ._stop
+        position: absolute
+        bottom: 0
+        right: 0
+        z-index: 10
+        animation: stop 100ms ease-in-out
+
+@keyframes stop
+    0%
+        bottom: -35px
+    100%
+        bottom: 0
+
+._container__daibl
+    ._content
+        background: $white-color
+        border: 1px solid get-color-level($daibl-color, 10)
+
+        ._text
+            a
+                color: $daibl-color
+                text-decoration: underline get-color-level($daibl-color, 50)
+
+            table
+                th, td
+                    border: 1px solid get-color-level($daibl-color, 8)
+
+    ._tool
+        color: $daibl-color
+
+
+._container__gemini
+    ._content
+        background: $white-color
+        border: 1px solid get-color-level($gemini-color, 10)
+
+        ._text
+            a
+                color: $gemini-color
+
+            table
+                th, td
+                    border: 1px solid get-color-level($gemini-color, 8)
+
+    ._tool
+        color: $gemini-color
