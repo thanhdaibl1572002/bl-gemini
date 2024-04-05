@@ -47,7 +47,7 @@ const Footer: FC<IFooterProps> = ({
           await set(push(messageRef), { role: 'user', message: text })
 
           const { userHistories, aiHistories } = convertMessagesToHistories(messages)
-          console.log(userHistories, aiHistories)
+          // console.log(userHistories, aiHistories)
 
           const chat = model.startChat({
             history: [
@@ -86,8 +86,6 @@ const Footer: FC<IFooterProps> = ({
       isRunning = false
     }
   }, [isGenerating])
-
-  // console.log(displayText)
 
   useEffect(() => {
     if (mode === 'daibl') {
