@@ -6,21 +6,25 @@ import { SiNintendogamecube } from 'react-icons/si'
 import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
 import { RiBardLine } from 'react-icons/ri'
 import { CiBoxList, CiCreditCard1 } from 'react-icons/ci'
-import Sessions from './Sessions'
+import SessionTitles from '@/components/layouts/SessionTitles'
 
 interface IHeaderProps {
   mode?: 'daibl' | 'gemini'
+  userID: string
+  sessionID: string
 }
 
 const Header: FC<IHeaderProps> = ({
   mode = 'daibl',
+  userID,
+  sessionID,
 }) => {
 
   const [showSessions, setShowSessions] = useState<string>('')
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      <Sessions isShow={showSessions}/>
+      <SessionTitles mode={mode} isShow={showSessions} userID={userID} sessionID={sessionID}/>
       <Logo
         logoText={mode === 'daibl' ? 'DAIBL' : 'GEMINI'}
         logoIcon={mode === 'daibl' ? <SiNintendogamecube /> : <RiBardLine />}

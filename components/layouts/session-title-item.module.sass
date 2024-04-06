@@ -1,0 +1,74 @@
+@import ../../variables/variables
+
+._container__daibl,
+._container__gemini
+    background: $white-color
+    cursor: pointer
+    white-space: nowrap
+    transition: 0.1s
+    align-items: center
+    justify-content: space-between
+    border-radius: 5px
+    padding: 0 5px
+    height: 45px
+    width: 100%
+
+    ._actions
+        column-gap: 3px
+
+        ._edit
+            font-size: 20px
+            display: none
+
+        ._delete
+            font-size: 20px
+            color: $red-color
+            display: none
+
+        ._complete
+            font-size: 20px
+            color: $green-color
+
+    input
+        padding: 8px 5px
+        background: $white-color
+        color: $gemini-color
+        border: 1px solid get-color-level($gemini-color, 20)
+        border-radius: 5px
+
+    a
+        align-items: center
+        column-gap: 10px
+        font-size: 14.5px
+        height: 100%
+
+
+._container__daibl
+    &:hover
+        background: get-color-level($daibl-color, 5)
+        color: $daibl-color
+        ._actions
+            ._edit
+                display: flex
+
+            ._delete
+                display: flex
+
+    ._actions
+        ._edit
+            color: $daibl-color
+
+._container__gemini
+    &:hover
+        background: get-color-level($gemini-color, 5)
+        color: $gemini-color
+        ._actions
+            ._edit
+                display: flex
+
+            ._delete
+                display: flex
+
+    ._actions
+        ._edit
+            color: $gemini-color

@@ -1,44 +1,32 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
-import styles from '@/app/gemini/gemini.module.sass'
-import Header from '@/components/layouts/Header'
-import ChatBox from '@/components/layouts/ChatBox'
-import Footer from '@/components/layouts/Footer'
-import { firebaseAuth } from '@/firebase'
+import { FC, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { firebaseAuth, firebaseRealtimeDatabase } from '@/firebase'
 import { signInAnonymously } from 'firebase/auth'
+import { v4 } from 'uuid'
+import { push, ref, set } from 'firebase/database'
 
 const Gemini: FC = () => {
 
-  const [userID, setUserID] = useState<string>()
+    const router = useRouter()
 
-  useEffect(() => {
-    const signIn = async (): Promise<void> => {
-      const userID = localStorage.getItem(process.env.ANONYMOUSLY_USER_LOCAL_STORAGE_KEY as string)
-      if (userID) {
-        setUserID(userID)
-        return
-      } else {
-        const userID = (await signInAnonymously(firebaseAuth)).user.uid
-        if (userID) {
-          localStorage.setItem(process.env.ANONYMOUSLY_USER_LOCAL_STORAGE_KEY as string, userID)
-          setUserID(userID)
-        }
-      }
-    }
-    signIn()
-  }, [])
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const sessionID = v4()
+            const initTitles = ['😊', '❤️', '😄', '🥰', '😁', '😆', '😂', '😃', '😀', '😉', '😋', '😎', '😇', '🤩']
+            const randomTitle = initTitles[Math.floor(Math.random() * initTitles.length)]
+            const userID = (await signInAnonymously(firebaseAuth)).user.uid
+            if (userID) {
+                const sessionRef = ref(firebaseRealtimeDatabase, `gemini/${userID}/sessions/${sessionID}`)
+                const titleRef = ref(firebaseRealtimeDatabase, `gemini/${userID}/titles/${sessionID}`)
+                await set(push(sessionRef), { role: 'ai', message: '<h2>Xin chào, tôi là <strong>Gemini</strong>, một mô hình ngôn ngữ được đào tạo bởi Google. Hãy đặt câu hỏi đầu tiên của bạn!</h2>', })
+                await set(titleRef, `${randomTitle} Cuộc trò chuyện mới`)
+                router.push(`/gemini/${userID}/${sessionID}`)
+            }
+        })()
+    }, [])
 
-  return (
-    <div className={styles._container__gemini}>
-      {userID && (
-        <>
-          <Header mode={'gemini'} />
-          <ChatBox mode={'gemini'} userID={userID} />
-          <Footer mode={'gemini'} userID={userID} />
-        </>
-      )}
-    </div>
-  )
+    return <></>
 }
 
 export default Gemini

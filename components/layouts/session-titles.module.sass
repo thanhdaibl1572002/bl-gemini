@@ -1,0 +1,44 @@
+@import ../../variables/variables
+
+._container__daibl,
+._container__gemini
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100vh
+    z-index: 100
+    opacity: 0
+    visibility: hidden
+    transition: 0.3s
+
+    ._background 
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        background: get-color-level($black-color, 20)
+
+    ._list 
+        position: absolute
+        top: 0
+        left: -250px
+        width: 250px
+        height: 100%
+        padding: 20px 10px
+        background: $white-color
+        z-index: 101
+        transition-delay: 0.1s
+        transition: 0.3s
+        flex-direction: column
+        row-gap: 30px
+
+        ul
+            flex-direction: column
+            row-gap: 5px
+
+._container__daibl
+
+
+._container__gemini

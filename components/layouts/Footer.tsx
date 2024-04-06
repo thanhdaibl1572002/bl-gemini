@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { ChangeEvent, FC, KeyboardEvent, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from 'react'
 import styles from '@/components/layouts/footer.module.sass'
 import { daiblGradientColor, geminiGradientColor, whiteColor } from '@/variables/variables'
 import { useAppSelector } from '@/redux'
@@ -9,21 +9,19 @@ import Button from '@/components/forms/Button'
 import { addNewMessage, setDisplayText, setIsComplete, setIsGenerating, setMessageStatus } from '@/redux/slices/generateMessage'
 import { push, ref, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-import { convertMessagesToHistories } from '@/firebase/query'
 import { CiPaperplane } from 'react-icons/ci'
+import { convertMessagesToHistories, model } from '@/utils'
 
 interface IFooterProps {
   mode?: 'daibl' | 'gemini'
   userID: string
+  sessionID: string
 }
-
-const genAI = new GoogleGenerativeAI(process.env.geminiApiKey as string)
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
 
 const Footer: FC<IFooterProps> = ({
   mode = 'daibl',
   userID,
+  sessionID,
 }) => {
 
   const { isGenerating, isComplete, displayText, messages } = useAppSelector(state => state.generateMessage)
@@ -32,9 +30,8 @@ const Footer: FC<IFooterProps> = ({
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setText('')
     let isRunning: boolean = true
-    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}`)
+    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/${sessionID}`)
 
     if (mode === 'daibl') {
       console.log('DAIBL Generating')
@@ -42,12 +39,11 @@ const Footer: FC<IFooterProps> = ({
     } else if (mode === 'gemini') {
       (async () => {
         if (isGenerating && text.trim()) {
+          setText('')
           dispatch(addNewMessage({ role: 'user', message: text }))
           dispatch(addNewMessage({ role: 'ai', message: '' }))
           await set(push(messageRef), { role: 'user', message: text })
-
           const { userHistories, aiHistories } = convertMessagesToHistories(messages)
-
           const chat = model.startChat({
             history: [
               { role: 'user', parts: userHistories && userHistories.length > 0 ? userHistories : [{ text: 'Xin chào' }] },
@@ -57,7 +53,6 @@ const Footer: FC<IFooterProps> = ({
               maxOutputTokens: 1000,
             },
           })
-
           const result = chat.sendMessageStream(text)
           let resultText = ''
           let charIndex = 0
@@ -89,11 +84,11 @@ const Footer: FC<IFooterProps> = ({
   useEffect(() => {
     if (mode === 'daibl') {
 
-    } else if (mode === 'gemini'){
+    } else if (mode === 'gemini') {
       (async () => {
         if (isComplete && displayText.trim() && !isGenerating) {
           dispatch(setMessageStatus({ role: 'ai', message: displayText }))
-          const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}`)
+          const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/${sessionID}`)
           await set(push(messageRef), { role: 'ai', message: displayText })
           dispatch(setDisplayText(''))
           dispatch(setIsComplete(false))
@@ -102,7 +97,9 @@ const Footer: FC<IFooterProps> = ({
     }
   }, [isComplete, isGenerating])
 
-  const handleSend = (): void => { dispatch(setIsGenerating(true)) }
+  const handleSend = (): void => {
+    dispatch(setIsGenerating(true))
+  }
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>): void => setText(event.target.value)
 
@@ -115,24 +112,28 @@ const Footer: FC<IFooterProps> = ({
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      <textarea
-        placeholder={mode === 'daibl' ? 'Phân loại bình luận với DAIBL' : 'Trò chuyện với Gemini AI'}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        value={text}
-      >
-      </textarea>
-      <Button
-        buttonClassName={styles._send}
-        buttonIcon={useMemo(() => <CiPaperplane />, [])}
-        buttonIconColor={whiteColor}
-        buttonIconSize={28}
-        buttonWidth={40}
-        buttonHeight={40}
-        buttonBackground={mode === 'daibl' ? daiblGradientColor : geminiGradientColor}
-        disabled={isGenerating || !text.trim()}
-        onClick={handleSend}
-      />
+      {messages && messages.length > 0 && (
+        <>
+          <textarea
+            placeholder={mode === 'daibl' ? 'Phân loại bình luận với DAIBL' : 'Trò chuyện với Gemini AI'}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            value={text}
+          >
+          </textarea>
+          <Button
+            buttonClassName={styles._send}
+            buttonIcon={<CiPaperplane />}
+            buttonIconColor={whiteColor}
+            buttonIconSize={28}
+            buttonWidth={40}
+            buttonHeight={40}
+            buttonBackground={mode === 'daibl' ? daiblGradientColor : geminiGradientColor}
+            disabled={isGenerating || !text.trim()}
+            onClick={handleSend}
+          />
+        </>
+      )}
     </div>
   )
 }

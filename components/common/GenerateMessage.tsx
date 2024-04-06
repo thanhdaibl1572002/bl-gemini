@@ -44,10 +44,10 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
           buttonIcon={<PiStopCircleLight />}
           buttonIconColor={redColor}
           buttonIconSize={23}
+          buttonText={'Dừng'}
           buttonTextColor={redColor}
           buttonTextSize={13}
-          buttonWidth={35}
-          buttonHeight={35}
+          buttonHeight={40}
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
           buttonBubbleColor={daiblColor}

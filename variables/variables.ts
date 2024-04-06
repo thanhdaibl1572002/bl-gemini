@@ -6,6 +6,7 @@ export const geminiColor = `rgb(119, 44, 232)`
 export const whiteColor = `rgb(255, 255, 255)`
 export const blackColor = `rgb(30, 39, 46)`
 export const redColor = `rgb(255, 56, 56)`
+export const greenColor = `rgb(50, 255, 126)`
 
 export const whiteGradientColor = `linear-gradient( 109.6deg,  rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1% )`
 export const blackGradientColor = `linear-gradient( 109.6deg,  rgba(20,30,48,1) 11.2%, rgba(36,59,85,1) 91.1% )`

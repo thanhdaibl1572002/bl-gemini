@@ -4,10 +4,12 @@ import { configureStore, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 import generateMessageReducer from '@/redux/slices/generateMessage'
+import sessionTitlesReducer from '@/redux/slices/sessionTitle'
 
 const store = configureStore({
   reducer: {
     generateMessage: generateMessageReducer,
+    sessionTitles: sessionTitlesReducer,
   },
 })
 

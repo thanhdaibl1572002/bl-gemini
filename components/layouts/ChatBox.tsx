@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { FC, UIEvent, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/generateMessage'
@@ -9,15 +9,16 @@ import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
 
-
 interface IChatBoxProps {
-  mode: 'daibl' | 'gemini',
+  mode: 'daibl' | 'gemini'
   userID: string
+  sessionID: string
 }
 
 const ChatBox: FC<IChatBoxProps> = ({
   mode,
   userID,
+  sessionID,
 }) => {
 
   const { messages } = useAppSelector(state => state.generateMessage)
@@ -25,15 +26,16 @@ const ChatBox: FC<IChatBoxProps> = ({
 
   useEffect(() => {
     (async () => {
-      const loadedMessages = await getLimitedMessages(mode, userID, 10)
-      dispatch(setMessages(loadedMessages))
+      const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
+      dispatch(setMessages(limitMessages))
+      console.log('Getting messages')
     })()
-  }, [mode, userID])
+  }, [mode, userID, sessionID])
 
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
+      {messages && messages.length > 0 ? messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':
             if (mes.message) {
@@ -46,7 +48,11 @@ const ChatBox: FC<IChatBoxProps> = ({
           default:
             return null
         }
-      })}
+      }) : (
+        <div className={styles._deleted}>
+          Bạn đã xóa cuộc trò chuyện này
+        </div>
+      )}
     </div>
   )
 }
