@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useMemo, useState } from 'react'
 import styles from '@/components/layouts/footer.module.sass'
 import { daiblGradientColor, geminiGradientColor, whiteColor } from '@/variables/variables'
 import { useAppSelector } from '@/redux'
 import { useAppDispatch } from '@/redux'
 import Button from '@/components/forms/Button'
-import { VscSend } from 'react-icons/vsc'
 import { addNewMessage, setDisplayText, setIsComplete, setIsGenerating, setMessageStatus } from '@/redux/slices/generateMessage'
 import { push, ref, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { convertMessagesToHistories } from '@/firebase/query'
+import { CiPaperplane } from 'react-icons/ci'
 
 interface IFooterProps {
   mode?: 'daibl' | 'gemini',
@@ -125,9 +125,9 @@ const Footer: FC<IFooterProps> = ({
       </textarea>
       <Button
         buttonClassName={styles._send}
-        buttonIcon={<VscSend />}
+        buttonIcon={useMemo(() => <CiPaperplane />, [])}
         buttonIconColor={whiteColor}
-        buttonIconSize={25}
+        buttonIconSize={28}
         buttonWidth={40}
         buttonHeight={40}
         buttonBackground={mode === 'daibl' ? daiblGradientColor : geminiGradientColor}

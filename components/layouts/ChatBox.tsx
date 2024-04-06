@@ -4,15 +4,15 @@ import { FC, UIEvent, useEffect, useState } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/generateMessage'
-import { convertMessagesToHistories, getLimitedMessages, writeTestMessages } from '@/firebase/query'
+import { getLimitedMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
 
 interface IMessage {
-  key: string;
-  role: string;
-  message: string;
+  key: string
+  role: string
+  session: string
 }
 
 interface IChatBoxProps {
