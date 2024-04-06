@@ -8,13 +8,7 @@ import { getLimitedMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
-import Welcome from '@/components/layouts/Welcome'
 
-interface IMessage {
-  key: string
-  role: string
-  session: string
-}
 
 interface IChatBoxProps {
   mode: 'daibl' | 'gemini',
@@ -39,7 +33,7 @@ const ChatBox: FC<IChatBoxProps> = ({
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      {messages && messages.length > 0 ? messages.map((mes, mesIndex) => {
+      {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':
             if (mes.message) {
@@ -52,9 +46,7 @@ const ChatBox: FC<IChatBoxProps> = ({
           default:
             return null
         }
-      }) : (
-        <Welcome mode={mode}/>
-      )}
+      })}
     </div>
   )
 }

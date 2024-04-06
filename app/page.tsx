@@ -16,7 +16,7 @@ const Home: FC = () => {
   return (
     <div className={styles._container__daibl}>
       {/* <Header mode={'daibl'} />
-      <ChatBox mode={'daibl'} messages={messages} />
+      <ChatBox mode={'daibl'} />
       <Footer mode={'daibl'} /> */}
     </div>
   )

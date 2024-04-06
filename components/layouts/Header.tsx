@@ -39,7 +39,7 @@ const Header: FC<IHeaderProps> = ({
           buttonLink={mode === 'daibl' ? '/gemini' : '/'}
         />
 
-        <Button
+        {/* <Button
           buttonIcon={<CiCreditCard1 />}
           buttonIconColor={mode === 'daibl' ? daiblColor : geminiColor}
           buttonIconSize={28}
@@ -48,7 +48,7 @@ const Header: FC<IHeaderProps> = ({
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
           buttonBubbleColor={daiblColor}
-        />
+        /> */}
 
         <Button
           buttonIcon={<CiBoxList />}
