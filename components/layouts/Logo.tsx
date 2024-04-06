@@ -2,7 +2,7 @@ import { FC, ReactElement, ReactNode } from 'react'
 import styles from '@/components/layouts/logo.module.sass'
 import Link from 'next/link'
 import { SiNintendogamecube } from 'react-icons/si'
-import { daiblColor } from '@/variables/variables'
+import { daiblColor, whiteColor } from '@/variables/variables'
 
 interface ILogoProps {
     logoText?: string
@@ -11,23 +11,35 @@ interface ILogoProps {
     logoIcon?: ReactNode | ReactElement
     logoIconSize?: number | string
     logoIconColor?: string
+    logoLink?: string
 }
 
 const Logo: FC<ILogoProps> = ({
     logoText = 'DAIBL',
     logoTextSize = '12px',
-    logoTextColor = daiblColor,
+    logoTextColor = whiteColor,
     logoIcon = <SiNintendogamecube />,
     logoIconSize = 32,
     logoIconColor = daiblColor,
+    logoLink = '/'
 }) => {
     return (
-        <Link
-            href={'/'}
-            className={styles._container}
-        >
-            <span style={{ fontSize: logoIconSize, color: logoIconColor }}>{logoIcon}</span>
-            <h1 style={{ fontSize: logoTextSize, color: logoTextColor }}>{logoText}</h1>
+        <Link href={logoLink} className={styles._container}>
+            <span
+                style={{
+                    fontSize: logoIconSize,
+                    color: logoIconColor
+                }}>
+                {logoIcon}
+            </span>
+            <h1
+                style={{
+                    fontSize: logoTextSize,
+                    color: logoTextColor,
+                    WebkitTextStroke: `0.5px ${logoIconColor}`
+                }}>
+                {logoText}
+            </h1>
         </Link>
     )
 }

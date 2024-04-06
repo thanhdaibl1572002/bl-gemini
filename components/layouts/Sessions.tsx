@@ -2,12 +2,9 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import styles from '@/components/layouts/sessions.module.sass'
 import Button from '../forms/Button'
-import { IoAddOutline, IoCloseOutline, IoTrashOutline } from 'react-icons/io5'
+import { IoAddOutline, IoCloseOutline } from 'react-icons/io5'
 import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
 import Link from 'next/link'
-import { CiChat1, CiChat2 } from 'react-icons/ci'
-import { HiOutlineChatBubbleBottomCenterText, HiOutlineChatBubbleLeftRight } from 'react-icons/hi2'
-import { PiChatsCircleThin } from 'react-icons/pi'
 
 interface ISessionsProps {
     mode?: 'daibl' | 'gemini',
@@ -33,7 +30,7 @@ const Sessions: FC<ISessionsProps> = ({
             sessionsRef.current.style.visibility = 'visible'
         }
         if (!showSessions && sessionsRef.current && listRef.current) {
-            listRef.current.style.left = '-100%'
+            listRef.current.style.left = '-250px'
             sessionsRef.current.style.opacity = '0'
             sessionsRef.current.style.visibility = 'hidden'
         }

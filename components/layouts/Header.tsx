@@ -23,7 +23,6 @@ const Header: FC<IHeaderProps> = ({
       <Sessions isShow={showSessions}/>
       <Logo
         logoText={mode === 'daibl' ? 'DAIBL' : 'GEMINI'}
-        logoTextColor={mode === 'daibl' ? daiblColor : geminiColor}
         logoIcon={mode === 'daibl' ? <SiNintendogamecube /> : <RiBardLine />}
         logoIconColor={mode === 'daibl' ? daiblColor : geminiColor}
       />

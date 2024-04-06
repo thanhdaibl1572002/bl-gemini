@@ -14,7 +14,7 @@ import { convertMessagesToHistories } from '@/firebase/query'
 import { CiPaperplane } from 'react-icons/ci'
 
 interface IFooterProps {
-  mode?: 'daibl' | 'gemini',
+  mode?: 'daibl' | 'gemini'
   userID: string
 }
 
@@ -47,7 +47,6 @@ const Footer: FC<IFooterProps> = ({
           await set(push(messageRef), { role: 'user', message: text })
 
           const { userHistories, aiHistories } = convertMessagesToHistories(messages)
-          // console.log(userHistories, aiHistories)
 
           const chat = model.startChat({
             history: [

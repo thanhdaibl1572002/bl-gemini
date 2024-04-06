@@ -8,6 +8,7 @@ import { getLimitedMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
+import Welcome from '@/components/layouts/Welcome'
 
 interface IMessage {
   key: string
@@ -27,7 +28,6 @@ const ChatBox: FC<IChatBoxProps> = ({
 
   const { messages } = useAppSelector(state => state.generateMessage)
   const dispatch = useAppDispatch()
-  // const [isLoadMore, setIsLoadMore] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -35,24 +35,11 @@ const ChatBox: FC<IChatBoxProps> = ({
       dispatch(setMessages(loadedMessages))
     })()
   }, [mode, userID])
-  
-
-  // const handleScroll = (event: UIEvent<HTMLDivElement>): void => {
-  //   const target = event.currentTarget
-  //   if (target.scrollTop === 0 && !isLoadMore) {
-  //     setIsLoadMore(true);
-  //     (async () => {
-  //       const additionalMessages = await getLimitedMessages(mode, userID, messages.length + 10)
-  //       dispatch(setMessages([...messages, ...additionalMessages]))
-  //       setIsLoadMore(false)
-  //     })()
-  //   }
-  // }
 
 
   return (
-    <div className={styles[`_container__${mode}`]}> {/* onScroll={handleScroll} */}
-      {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
+    <div className={styles[`_container__${mode}`]}>
+      {messages && messages.length > 0 ? messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':
             if (mes.message) {
@@ -65,7 +52,9 @@ const ChatBox: FC<IChatBoxProps> = ({
           default:
             return null
         }
-      })}
+      }) : (
+        <Welcome mode={mode}/>
+      )}
     </div>
   )
 }
