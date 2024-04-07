@@ -1,4 +1,7 @@
 export interface ISessionTitle {
-    sessionID?: string
-    title: string
-}
+    sessionID: string
+    title: { 
+        timestamp: number
+        title: string 
+    }
+} 

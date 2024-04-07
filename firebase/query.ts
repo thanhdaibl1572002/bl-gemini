@@ -1,4 +1,4 @@
-import { child, get, limitToLast, push, query, ref, set } from 'firebase/database'
+import { child, get, limitToLast, orderByChild, orderByKey, push, query, ref, set } from 'firebase/database'
 import { IMessage } from '@/interfaces/message'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { ISessionTitle } from '@/interfaces/sessionTitle'
@@ -39,11 +39,14 @@ export const getLimitedSessionTitles = async (
         const snapshot = await get(q)
         if (snapshot.exists()) {
             const data = snapshot.val()
-            const titles: Array<ISessionTitle> = Object.entries(data).map(([key, value]) => ({
-                sessionID: key,
-                title: (value as ISessionTitle['title']),
-            }))
-            return titles
+            const titles: Array<ISessionTitle> = Object.entries(data).map(([key, value]) =>{
+                const { timestamp, title } = value as { timestamp: number, title: string }
+                return {
+                    sessionID: key,
+                    title: { timestamp, title },
+                }
+            })
+            return titles.sort((a, b) => b.title.timestamp - a.title.timestamp)
         } else {
             return []
         }

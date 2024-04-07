@@ -3,13 +3,13 @@ import type { TypedUseSelectorHook } from 'react-redux'
 import { configureStore, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import generateMessageReducer from '@/redux/slices/generateMessage'
-import sessionTitlesReducer from '@/redux/slices/sessionTitle'
+import messageReducer from '@/redux/slices/messageSlice'
+import sessionReducer from '@/redux/slices/sessionSlice'
 
 const store = configureStore({
   reducer: {
-    generateMessage: generateMessageReducer,
-    sessionTitles: sessionTitlesReducer,
+    message: messageReducer,
+    session: sessionReducer,
   },
 })
 

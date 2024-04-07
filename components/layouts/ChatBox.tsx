@@ -3,7 +3,7 @@
 import { FC, useEffect } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
-import { setMessages } from '@/redux/slices/generateMessage'
+import { setMessages } from '@/redux/slices/messageSlice'
 import { getLimitedMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
@@ -21,21 +21,21 @@ const ChatBox: FC<IChatBoxProps> = ({
   sessionID,
 }) => {
 
-  const { messages } = useAppSelector(state => state.generateMessage)
+  const { messages } = useAppSelector(state => state.message)
+
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     (async () => {
       const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
       dispatch(setMessages(limitMessages))
-      console.log('Getting messages')
     })()
-  }, [mode, userID, sessionID])
+  }, [])
 
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      {messages && messages.length > 0 ? messages.map((mes, mesIndex) => {
+      {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':
             if (mes.message) {
@@ -48,11 +48,7 @@ const ChatBox: FC<IChatBoxProps> = ({
           default:
             return null
         }
-      }) : (
-        <div className={styles._deleted}>
-          Bạn đã xóa cuộc trò chuyện này
-        </div>
-      )}
+      })}
     </div>
   )
 }

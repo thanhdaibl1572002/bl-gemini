@@ -1,7 +1,9 @@
 @import ../../variables/variables
 
 ._container__daibl,
-._container__gemini
+._container__gemini,
+._container__daibl__active,
+._container__gemini__active
     background: $white-color
     cursor: pointer
     white-space: nowrap
@@ -18,12 +20,10 @@
 
         ._edit
             font-size: 20px
-            display: none
 
         ._delete
             font-size: 20px
             color: $red-color
-            display: none
 
         ._complete
             font-size: 20px
@@ -43,32 +43,30 @@
         height: 100%
 
 
-._container__daibl
+._container__daibl,
+._container__daibl__active
     &:hover
         background: get-color-level($daibl-color, 5)
         color: $daibl-color
-        ._actions
-            ._edit
-                display: flex
-
-            ._delete
-                display: flex
 
     ._actions
         ._edit
             color: $daibl-color
 
-._container__gemini
+._container__gemini,
+._container__gemini__active
     &:hover
         background: get-color-level($gemini-color, 5)
         color: $gemini-color
-        ._actions
-            ._edit
-                display: flex
-
-            ._delete
-                display: flex
 
     ._actions
         ._edit
             color: $gemini-color
+
+._container__daibl__active
+    background: get-color-level($daibl-color, 5)
+    color: $daibl-color
+
+._container__gemini__active
+    background: get-color-level($gemini-color, 5)
+    color: $gemini-color

@@ -6,7 +6,7 @@ import { daiblGradientColor, geminiGradientColor, whiteColor } from '@/variables
 import { useAppSelector } from '@/redux'
 import { useAppDispatch } from '@/redux'
 import Button from '@/components/forms/Button'
-import { addNewMessage, setDisplayText, setIsComplete, setIsGenerating, setMessageStatus } from '@/redux/slices/generateMessage'
+import { addNewMessage, setDisplayText, setIsComplete, setIsGenerating, setMessageStatus } from '@/redux/slices/messageSlice'
 import { push, ref, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { CiPaperplane } from 'react-icons/ci'
@@ -24,14 +24,14 @@ const Footer: FC<IFooterProps> = ({
   sessionID,
 }) => {
 
-  const { isGenerating, isComplete, displayText, messages } = useAppSelector(state => state.generateMessage)
+  const { isGenerating, isComplete, displayText, messages } = useAppSelector(state => state.message)
   const [text, setText] = useState<string>('')
 
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     let isRunning: boolean = true
-    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/${sessionID}`)
+    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions/${sessionID}`)
 
     if (mode === 'daibl') {
       console.log('DAIBL Generating')
@@ -88,7 +88,7 @@ const Footer: FC<IFooterProps> = ({
       (async () => {
         if (isComplete && displayText.trim() && !isGenerating) {
           dispatch(setMessageStatus({ role: 'ai', message: displayText }))
-          const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/${sessionID}`)
+          const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions/${sessionID}`)
           await set(push(messageRef), { role: 'ai', message: displayText })
           dispatch(setDisplayText(''))
           dispatch(setIsComplete(false))

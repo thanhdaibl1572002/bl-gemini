@@ -7,7 +7,7 @@ import MarkDown from '@/components/common/MarkDown'
 import Button from '@/components/forms/Button'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import MessageTitle from '@/components/common/MessageTitle'
-import { setIsGenerating } from '@/redux/slices/generateMessage'
+import { setIsGenerating } from '@/redux/slices/messageSlice'
 
 interface IGenerateMessageProps {
   mode?: 'daibl' | 'gemini',
@@ -18,7 +18,7 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
 }) => {
 
   const messageRef = useRef<HTMLDivElement>(null)
-  const { displayText, isGenerating } = useAppSelector(state => state.generateMessage)
+  const { displayText, isGenerating } = useAppSelector(state => state.message)
 
   const dispatch = useAppDispatch()
 

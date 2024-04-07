@@ -15,8 +15,8 @@ const initialState: IGenerateMessage = {
     messages: [],
 }
 
-const MessageStatusSlice = createSlice({
-    name: 'generateMessage',
+const MessageSlice = createSlice({
+    name: 'message',
     initialState,
     reducers: {
         setIsGenerating(state, action: PayloadAction<boolean>) {
@@ -40,5 +40,5 @@ const MessageStatusSlice = createSlice({
     }
 })
 
-export const { setIsGenerating, setIsComplete, setDisplayText, setMessages, addNewMessage, setMessageStatus } = MessageStatusSlice.actions
-export default MessageStatusSlice.reducer
+export const { setIsGenerating, setIsComplete, setDisplayText, setMessages, addNewMessage, setMessageStatus } = MessageSlice.actions
+export default MessageSlice.reducer

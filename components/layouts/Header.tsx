@@ -6,25 +6,21 @@ import { SiNintendogamecube } from 'react-icons/si'
 import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
 import { RiBardLine } from 'react-icons/ri'
 import { CiBoxList, CiCreditCard1 } from 'react-icons/ci'
-import SessionTitles from '@/components/layouts/SessionTitles'
+import { useAppDispatch } from '@/redux'
+import { setIsShowing } from '@/redux/slices/sessionSlice'
 
 interface IHeaderProps {
   mode?: 'daibl' | 'gemini'
-  userID: string
-  sessionID: string
 }
 
 const Header: FC<IHeaderProps> = ({
   mode = 'daibl',
-  userID,
-  sessionID,
 }) => {
 
-  const [showSessions, setShowSessions] = useState<string>('')
+  const dispatch = useAppDispatch()
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      <SessionTitles mode={mode} isShow={showSessions} userID={userID} sessionID={sessionID}/>
       <Logo
         logoText={mode === 'daibl' ? 'DAIBL' : 'GEMINI'}
         logoIcon={mode === 'daibl' ? <SiNintendogamecube /> : <RiBardLine />}
@@ -55,6 +51,7 @@ const Header: FC<IHeaderProps> = ({
         /> */}
 
         <Button
+          buttonClassName={styles._show}
           buttonIcon={<CiBoxList />}
           buttonIconColor={mode === 'daibl' ? daiblColor : geminiColor}
           buttonIconSize={25}
@@ -63,7 +60,7 @@ const Header: FC<IHeaderProps> = ({
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
           buttonBubbleColor={daiblColor}
-          onClick={() => setShowSessions(new Date().getTime().toString())}
+          onClick={() => dispatch(setIsShowing(true))}
         />
       </div>
     </div>

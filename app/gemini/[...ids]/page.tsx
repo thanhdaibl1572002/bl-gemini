@@ -4,6 +4,7 @@ import styles from '@/app/gemini/[...ids]/gemini.module.sass'
 import Header from '@/components/layouts/Header'
 import ChatBox from '@/components/layouts/ChatBox'
 import Footer from '@/components/layouts/Footer'
+import Sessions from '@/components/layouts/Sessions'
 
 interface IGeminiProps {
     params: {
@@ -20,9 +21,10 @@ const Gemini: FC<IGeminiProps> = ({ params }) => {
         <div className={styles._container__gemini}>
             {userID && sessionID && (
                 <>
-                    <Header mode={'gemini'} userID={userID} sessionID={sessionID} />
+                    <Header mode={'gemini'} />
                     <ChatBox mode={'gemini'} userID={userID} sessionID={sessionID} />
                     <Footer mode={'gemini'} userID={userID} sessionID={sessionID} />
+                    <Sessions mode={'gemini'} userID={userID} sessionID={sessionID} />
                 </>
             )}
         </div>
