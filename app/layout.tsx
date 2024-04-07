@@ -1,5 +1,5 @@
 'use client'
-import { FC, ReactElement, ReactNode, useEffect } from 'react'
+import { FC, ReactElement, ReactNode } from 'react'
 import '@/app/globals.sass'
 import { Provider, store } from '@/redux'
 
