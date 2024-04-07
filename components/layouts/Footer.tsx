@@ -10,7 +10,8 @@ import { addNewMessage, setDisplayText, setIsComplete, setIsGenerating, setMessa
 import { push, ref, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { CiPaperplane } from 'react-icons/ci'
-import { convertMessagesToHistories, model } from '@/utils'
+import { daiblResponseText, convertMessagesToHistories, model } from '@/utils'
+import axios from 'axios'
 
 interface IFooterProps {
   mode?: 'daibl' | 'gemini'
@@ -30,72 +31,101 @@ const Footer: FC<IFooterProps> = ({
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    let isRunning: boolean = true
-    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions/${sessionID}`)
+    let intervalCount: number = 0
+    if (isGenerating && mode === 'daibl' && text.trim()) {
+      const messageRef = ref(firebaseRealtimeDatabase, `daibl/${userID}/sessions/${sessionID}`)
+      setText('');
+      (async (): Promise<void> => {
+        dispatch(addNewMessage({ role: 'user', message: text }))
+        await set(push(messageRef), { role: 'user', message: text })
+        dispatch(addNewMessage({ role: 'ai', message: '' }))
+        const response = await axios.post(process.env.daiblServerUrl as string, { comment: text })
+        const responseData = response.data.toString()
+        const responseText = daiblResponseText(responseData, text)
+        let charIndex = 0
+        const intervalId = setInterval(() => {
+          charIndex++
+          dispatch(setDisplayText(responseText.slice(0, charIndex)))
+          if (charIndex >= responseText.length) {
+            clearInterval(intervalId)
+            intervalCount--
+            if (intervalCount === 0) {
+              dispatch(setIsGenerating(false))
+              dispatch(setIsComplete(true))
+            }
+          }
+        }, 0)
+        intervalCount++
+      })()
+    }
+  }, [isGenerating, mode])
 
-    if (mode === 'daibl') {
-      console.log('DAIBL Generating')
-      dispatch(setIsGenerating(false))
-    } else if (mode === 'gemini') {
-      (async () => {
-        if (isGenerating && text.trim()) {
-          setText('')
-          dispatch(addNewMessage({ role: 'user', message: text }))
-          dispatch(addNewMessage({ role: 'ai', message: '' }))
-          await set(push(messageRef), { role: 'user', message: text })
-          const { userHistories, aiHistories } = convertMessagesToHistories(messages)
-          const chat = model.startChat({
-            history: [
-              { role: 'user', parts: userHistories && userHistories.length > 0 ? userHistories : [{ text: 'Xin chào' }] },
-              { role: 'model', parts: aiHistories && aiHistories.length > 0 ? aiHistories : [{ text: 'Xin chào' }] },
-            ],
-            generationConfig: {
-              maxOutputTokens: 1000,
-            },
-          })
-          const result = chat.sendMessageStream(text)
-          let resultText = ''
-          let charIndex = 0
-          for await (const chunk of (await result).stream) {
-            if (!isRunning) break
-            let chunkText = chunk.text()
-            resultText += chunkText
-            const resultInterval = setInterval(() => {
-              dispatch(setDisplayText(resultText.slice(0, charIndex)))
-              charIndex++
-              chunkText = ''
-              if (charIndex >= resultText.length || !isRunning) {
-                clearInterval(resultInterval)
+  useEffect(() => {
+    let isRunning: boolean = true
+    let intervalCount: number = 0
+    if (isGenerating && mode === 'gemini' && text.trim()) {
+      const messageRef = ref(firebaseRealtimeDatabase, `gemini/${userID}/sessions/${sessionID}`)
+      setText('');
+      (async (): Promise<void> => {
+        if (!isRunning) return
+        dispatch(addNewMessage({ role: 'user', message: text }))
+        await set(push(messageRef), { role: 'user', message: text })
+        dispatch(addNewMessage({ role: 'ai', message: '' }))
+        const { userHistories, aiHistories } = convertMessagesToHistories(messages)
+        const chat = model.startChat({
+          history: [
+            { role: 'user', parts: userHistories && userHistories.length > 0 ? userHistories : [{ text: 'Xin chào' }] },
+            { role: 'model', parts: aiHistories && aiHistories.length > 0 ? aiHistories : [{ text: 'Xin chào' }] },
+          ],
+          generationConfig: {
+            maxOutputTokens: 1000,
+          },
+        })
+        const result = chat.sendMessageStream(text)
+        let resultText = ''
+        let charIndex = 0
+        for await (const chunk of (await result).stream) {
+          if (!isRunning) break
+          let chunkText = chunk.text()
+          resultText += chunkText
+          const intervalId = setInterval(() => {
+            charIndex++
+            chunkText = ''
+            dispatch(setDisplayText(resultText.slice(0, charIndex)))
+            if (charIndex >= resultText.length || !isRunning) {
+              clearInterval(intervalId)
+              intervalCount--
+              if (intervalCount === 0) {
                 dispatch(setIsGenerating(false))
                 dispatch(setIsComplete(true))
-                return
               }
-            }, 30)
-          }
+            }
+          }, 30)
+          intervalCount++
         }
       })()
     }
-
     return () => {
       isRunning = false
     }
   }, [isGenerating])
 
-  useEffect(() => {
-    if (mode === 'daibl') {
+  console.log('isComplete: ', isComplete, ' | isGenerating: ', isGenerating, ' | displayText: ', displayText)
 
-    } else if (mode === 'gemini') {
-      (async () => {
-        if (isComplete && displayText.trim() && !isGenerating) {
-          dispatch(setMessageStatus({ role: 'ai', message: displayText }))
-          const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions/${sessionID}`)
-          await set(push(messageRef), { role: 'ai', message: displayText })
-          dispatch(setDisplayText(''))
-          dispatch(setIsComplete(false))
-        }
+  useEffect(() => {
+    if (isComplete && !isGenerating && displayText.trim()) {
+      dispatch(setDisplayText(''))
+      dispatch(setIsComplete(false))
+      dispatch(setIsGenerating(false));
+      (async (): Promise<void> => {
+        dispatch(setMessageStatus({ role: 'ai', message: displayText }))
+        const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions/${sessionID}`)
+        await set(push(messageRef), { role: 'ai', message: displayText })
+        return
       })()
     }
-  }, [isComplete, isGenerating])
+  }, [isComplete, isGenerating, displayText])
+
 
   const handleSend = (): void => {
     dispatch(setIsGenerating(true))

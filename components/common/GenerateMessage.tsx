@@ -38,7 +38,7 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
           <MarkDown text={displayText} />
         </div>
       </div>
-      {isGenerating && (
+      {isGenerating && mode === 'gemini' && (
         <Button
           buttonClassName={styles._stop}
           buttonIcon={<IoStopCircleOutline />}
@@ -50,7 +50,7 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
           buttonWidth={40}
           buttonHeight={40}
           buttonBackground={whiteColor}
-          buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
+          buttonBorder={`1px solid ${getColorLevel(geminiColor , 10)}`}
           buttonBubbleColor={daiblColor}
           onClick={handleStop}
         />
