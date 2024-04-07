@@ -54,7 +54,6 @@ const Sessions: FC<ISessionProps> = ({
         (async (): Promise<void> => {
             const limitTitles = await getLimitedSessionTitles(mode, userID, 10)
             dispatch(setSessionTitles(limitTitles))
-            console.log(limitTitles)
         })()
     }, [])
 
@@ -70,7 +69,6 @@ const Sessions: FC<ISessionProps> = ({
         })
         await set(titleRef, { timestamp: new Date().getTime(), title: `${randomTitle} Cuộc trò chuyện mới` })
         router.push(`/${mode}/${userID}/${sessionID}`)
-    
     }
 
     return (

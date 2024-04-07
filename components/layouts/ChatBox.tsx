@@ -8,6 +8,7 @@ import { getLimitedMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
+import { setIsShowing } from '@/redux/slices/sessionSlice'
 
 interface IChatBoxProps {
   mode: 'daibl' | 'gemini'
@@ -26,6 +27,7 @@ const ChatBox: FC<IChatBoxProps> = ({
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    dispatch(setIsShowing(false));
     (async () => {
       const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
       dispatch(setMessages(limitMessages))
