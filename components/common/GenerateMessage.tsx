@@ -47,6 +47,7 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
           buttonText={''}
           buttonTextColor={redColor}
           buttonTextSize={13}
+          buttonWidth={40}
           buttonHeight={40}
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
