@@ -110,7 +110,7 @@ const Footer: FC<IFooterProps> = ({
     }
   }, [isGenerating])
 
-  console.log('isComplete: ', isComplete, ' | isGenerating: ', isGenerating, ' | displayText: ', displayText)
+  // console.log('isComplete: ', isComplete, ' | isGenerating: ', isGenerating, ' | displayText: ', displayText)
 
   useEffect(() => {
     if (isComplete && !isGenerating && displayText.trim()) {
