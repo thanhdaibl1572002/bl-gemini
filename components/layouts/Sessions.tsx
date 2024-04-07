@@ -10,7 +10,6 @@ import { getLimitedSessionTitles } from '@/firebase/query'
 import { IoAddOutline, IoCheckmark, IoCloseOutline } from 'react-icons/io5'
 import Link from 'next/link'
 import SessionItem from './SessionItem'
-import { v4 } from 'uuid'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { push, ref, set } from 'firebase/database'
 import { useRouter } from 'next/navigation'
@@ -58,17 +57,20 @@ const Sessions: FC<ISessionProps> = ({
     }, [])
 
     const handleAddSession = async (): Promise<void> => {
-        const sessionID = v4()
         const initTitles = ['😊', '❤️', '😄', '🥰', '😁', '😆', '😂', '😃', '😀', '😉', '😋', '😎', '😇', '🤩']
         const randomTitle = initTitles[Math.floor(Math.random() * initTitles.length)]
-        const sessionRef = ref(firebaseRealtimeDatabase, `gemini/${userID}/sessions/${sessionID}`)
-        const titleRef = ref(firebaseRealtimeDatabase, `gemini/${userID}/titles/${sessionID}`)
-        await set(push(sessionRef), { 
-            role: 'ai', 
-            message: mode === 'daibl' ? '<h2>Xin chào, tôi là <strong>DAIBL</strong>, một mô hình máy học được huyến luyện với mục đích giúp phân loại bình luận theo cảm xúc. Hãy nhập vào bình luận đầu tiên của bạn, tôi sẽ giúp bạn phân loại nó là bình luận <strong>tích cực</strong>, <strong>tiêu cực</strong> hay <strong>trung lập</strong>.</h2>' : '<h2>Xin chào, tôi là <strong>Gemini</strong>, một mô hình ngôn ngữ được đào tạo bởi Google. Hãy đặt câu hỏi đầu tiên của bạn!</h2>', 
+        const sessionsRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions`)
+                        
+        const newSessionRef = push(push(sessionsRef))
+        const newSessionID = newSessionRef.parent?.key
+        await set(newSessionRef, {
+            role: 'ai',
+            message: mode === 'daibl' ? '<h2>Xin chào, tôi là <strong>DAIBL</strong>, tôi có thể giúp dự đoán cảm xúc <strong>tích cực</strong>, <strong>tiêu cực</strong> hoặc <strong>trung lập</strong> của bình luận.' : '<h2>Xin chào, tôi là <strong>Gemini</strong>.',
         })
-        await set(titleRef, { timestamp: new Date().getTime(), title: `${randomTitle} Cuộc trò chuyện mới` })
-        router.push(`/${mode}/${userID}/${sessionID}`)
+        const titleRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/titles/${newSessionID}`)
+        await set(titleRef,`${randomTitle} Cuộc trò chuyện mới`)
+
+        router.push(`/${mode}/${userID}/${newSessionID}`)
     }
 
     return (
@@ -90,18 +92,17 @@ const Sessions: FC<ISessionProps> = ({
                     onClick={handleAddSession}
                 />
                 <ul>
-                    {sessionTitles && sessionTitles.length > 0 && sessionTitles.map((title, titleIndex) => (
+                    {sessionTitles && sessionTitles.length > 0 && sessionTitles.map((sessionTitle, sessionTitleIndex) => (
                         <SessionItem 
-                            key={titleIndex}
+                            key={sessionTitleIndex}
                             mode={mode}
                             userID={userID}
-                            sessiontitle={title.title.title}
-                            sessionID={title.sessionID}
+                            sessionTitle={sessionTitle.title}
+                            sessionID={sessionTitle.sessionID}
                             currentSessionID={sessionID}
                         />
                     ))}
                 </ul>
-                
             </div>
         </div>
     )

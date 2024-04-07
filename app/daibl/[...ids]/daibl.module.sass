@@ -1,18 +1,15 @@
-@import ../variables/variables
+@import ../../../variables/variables
 
-._container__daibl,
-._container__gemini
+._container__daibl
     width: 700px
     height: 100vh
     flex-direction: column
-    row-gap: 10px
+    row-gap: 0
     background: $white-color
     position: relative
     border-left: 1px solid get-color-level($daibl-color, 10)
     border-right: 1px solid get-color-level($daibl-color, 10)
+    overflow: hidden
 
 ._container__daibl
     background: get-color-level($daibl-color, 3)
-
-._container__gemini
-    background: get-color-level($gemini-color, 3)

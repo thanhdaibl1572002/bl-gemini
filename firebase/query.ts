@@ -1,12 +1,12 @@
-import { child, get, limitToLast, orderByChild, orderByKey, push, query, ref, set } from 'firebase/database'
+import { child, get, limitToFirst, limitToLast, orderByKey, query, ref } from 'firebase/database'
 import { IMessage } from '@/interfaces/message'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { ISessionTitle } from '@/interfaces/sessionTitle'
 
 export const getLimitedMessages = async (
-    mode: 'daibl' | 'gemini', 
-    userID: string, 
-    sessionID: string, 
+    mode: 'daibl' | 'gemini',
+    userID: string,
+    sessionID: string,
     limit: number = 10,
 ): Promise<Array<IMessage>> => {
     try {
@@ -28,9 +28,10 @@ export const getLimitedMessages = async (
     }
 }
 
+
 export const getLimitedSessionTitles = async (
-    mode: 'daibl' | 'gemini', 
-    userID: string, 
+    mode: 'daibl' | 'gemini',
+    userID: string,
     limit: number = 10,
 ): Promise<Array<ISessionTitle>> => {
     try {
@@ -39,14 +40,11 @@ export const getLimitedSessionTitles = async (
         const snapshot = await get(q)
         if (snapshot.exists()) {
             const data = snapshot.val()
-            const titles: Array<ISessionTitle> = Object.entries(data).map(([key, value]) =>{
-                const { timestamp, title } = value as { timestamp: number, title: string }
-                return {
-                    sessionID: key,
-                    title: { timestamp, title },
-                }
-            })
-            return titles.sort((a, b) => b.title.timestamp - a.title.timestamp)
+            const titles: Array<ISessionTitle> = Object.entries(data).map(([key, value]) => ({
+                sessionID: key,
+                title: value as ISessionTitle['title'],
+            }))
+            return titles.reverse()
         } else {
             return []
         }
@@ -55,20 +53,22 @@ export const getLimitedSessionTitles = async (
     }
 }
 
-export const writeTestMessages = async (
+
+export const getLatestSessionID = async (
     mode: 'daibl' | 'gemini', 
-    userID: string, 
-    sessionID: string
-): Promise<void> => {
-    const messageRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/${sessionID}`)
-    await set(push(messageRef), { role: 'ai', message: 'Đây là tin nhắn thứ 1' })
-    await set(push(messageRef), { role: 'user', message: 'Đây là tin nhắn thứ 2' })
-    await set(push(messageRef), { role: 'ai', message: 'Đây là tin nhắn thứ 3' })
-    await set(push(messageRef), { role: 'user', message: 'Đây là tin nhắn thứ 4' })
-    await set(push(messageRef), { role: 'ai', message: 'Đây là tin nhắn thứ 5' })
-    await set(push(messageRef), { role: 'user', message: 'Đây là tin nhắn thứ 6' })
-    await set(push(messageRef), { role: 'ai', message: 'Đây là tin nhắn thứ 7' })
-    await set(push(messageRef), { role: 'user', message: 'Đây là tin nhắn thứ 8' })
-    await set(push(messageRef), { role: 'ai', message: 'Đây là tin nhắn thứ 9' })
-    await set(push(messageRef), { role: 'user', message: 'Đây là tin nhắn thứ 10' })
+    userID: string,
+): Promise<string | null> => {
+    let latestSessionID = null
+    try {
+        const q = query(ref(firebaseRealtimeDatabase, `${mode}/${userID}/titles`), limitToLast(1))
+        const snapshot = await get(q)
+        if (snapshot.exists()) {
+            snapshot.forEach((childSnapshot) => {
+                latestSessionID = childSnapshot.key
+            })
+        }
+    } catch (error) {
+        throw error
+    }
+    return latestSessionID
 }

@@ -32,14 +32,13 @@
     input
         padding: 8px 5px
         background: $white-color
-        color: $gemini-color
-        border: 1px solid get-color-level($gemini-color, 20)
         border-radius: 5px
 
     a
         align-items: center
         column-gap: 10px
         font-size: 14.5px
+        width: 100%
         height: 100%
 
 
@@ -53,6 +52,10 @@
         ._edit
             color: $daibl-color
 
+    input
+        color: $daibl-color
+        border: 1px solid get-color-level($daibl-color, 20)
+
 ._container__gemini,
 ._container__gemini__active
     &:hover
@@ -62,6 +65,10 @@
     ._actions
         ._edit
             color: $gemini-color
+
+    input
+        color: $gemini-color
+        border: 1px solid get-color-level($gemini-color, 20)
 
 ._container__daibl__active
     background: get-color-level($daibl-color, 5)

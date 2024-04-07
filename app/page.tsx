@@ -1,25 +1,43 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
-import styles from '@/app/page.module.sass'
-import Header from '@/components/layouts/Header'
-import Footer from '@/components/layouts/Footer'
-import ChatBox from '@/components/layouts/ChatBox'
+import { FC, useEffect } from 'react'
 import { firebaseRealtimeDatabase, firebaseAuth } from '@/firebase'
 import { signInAnonymously } from 'firebase/auth'
-import { IMessage } from '@/interfaces/message'
-
+import { useRouter } from 'next/navigation'
+import { push, ref, set } from 'firebase/database'
+import { getLatestSessionID } from '@/firebase/query'
 
 const Home: FC = () => {
 
-  const [messages, setMessage] = useState<Array<IMessage>>([])
+    const router = useRouter()
 
-  return (
-    <div className={styles._container__daibl}>
-      {/* <Header mode={'daibl'} />
-      <ChatBox mode={'daibl'} />
-      <Footer mode={'daibl'} /> */}
-    </div>
-  )
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const userID = (await signInAnonymously(firebaseAuth)).user.uid
+            if (userID) {
+                const lastSessionID = await getLatestSessionID('daibl', userID)
+                if (lastSessionID) {
+                    router.push(`/daibl/${userID}/${lastSessionID}`)
+                } else {
+                    const initTitles = ['😊', '❤️', '😄', '🥰', '😁', '😆', '😂', '😃', '😀', '😉', '😋', '😎', '😇', '🤩']
+                    const randomTitle = initTitles[Math.floor(Math.random() * initTitles.length)]
+                    const sessionsRef = ref(firebaseRealtimeDatabase, `daibl/${userID}/sessions`)
+
+                    const newSessionRef = push(push(sessionsRef))
+                    const newSessionID = newSessionRef.parent?.key
+                    await set(newSessionRef, {
+                        role: 'ai',
+                        message: '<h2>Xin chào, tôi là <strong>DAIBL</strong>, tôi có thể giúp dự đoán cảm xúc <strong>tích cực</strong>, <strong>tiêu cực</strong> hoặc <strong>trung lập</strong> của bình luận.',
+                    })
+                    const titleRef = ref(firebaseRealtimeDatabase, `daibl/${userID}/titles/${newSessionID}`)
+                    await set(titleRef, `${randomTitle} Cuộc trò chuyện mới`)
+
+                    router.push(`daibl/${userID}/${newSessionID}`)
+                }
+            }
+        })()
+    }, [])
+
+    return <></>
 }
 
 export default Home
