@@ -1,13 +1,13 @@
 'use client'
-import { FC, memo, useCallback, useEffect, useRef } from 'react'
+import { FC, memo, useEffect, useRef } from 'react'
 import styles from '@/components/common/generate-message.module.sass'
 import { daiblColor, geminiColor, getColorLevel, redColor, whiteColor } from '@/variables/variables'
-import { PiCopySimpleLight, PiStopCircleLight } from 'react-icons/pi'
 import MarkDown from '@/components/common/MarkDown'
 import Button from '@/components/forms/Button'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import MessageTitle from '@/components/common/MessageTitle'
 import { setIsGenerating } from '@/redux/slices/messageSlice'
+import { IoStopCircleOutline } from 'react-icons/io5'
 
 interface IGenerateMessageProps {
   mode?: 'daibl' | 'gemini',
@@ -41,9 +41,9 @@ const GenerateMessage: FC<IGenerateMessageProps> = ({
       {isGenerating && (
         <Button
           buttonClassName={styles._stop}
-          buttonIcon={<PiStopCircleLight />}
+          buttonIcon={<IoStopCircleOutline />}
           buttonIconColor={redColor}
-          buttonIconSize={23}
+          buttonIconSize={25}
           buttonText={''}
           buttonTextColor={redColor}
           buttonTextSize={13}
