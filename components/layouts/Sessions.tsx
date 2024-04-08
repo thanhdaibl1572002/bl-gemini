@@ -87,20 +87,6 @@ const Sessions: FC<ISessionProps> = ({
         const store = transaction.objectStore(storeName)
         store.put(sessionTitles.slice(-10), `${mode}/${userID}`)
       }, [sessionTitles])
-    
-    //   useEffect(() => {
-    //     if (!db) return
-    //     const transaction = db.transaction(storeName, 'readwrite')
-    //     const store = transaction.objectStore(storeName)
-    //     store.put(messages, `${mode}/${userID}/${sessionID}`)
-    //   }, [messages])
-
-    // useEffect(() => {
-    //     (async (): Promise<void> => {
-            // const limitTitles = await getLimitedSessionTitles(mode, userID, 10)
-            // dispatch(setSessionTitles(limitTitles))
-    //     })()
-    // }, [])
 
     const handleAddSession = async (): Promise<void> => {
         if (sessionTitles.length < 10) {

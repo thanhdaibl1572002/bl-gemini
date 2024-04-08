@@ -11,10 +11,10 @@ import AIMessage from '@/components/common/AIMessage'
 import { setIsShowing } from '@/redux/slices/sessionSlice'
 import LoadMore from '@/components/common/LoadMore'
 import Button from '@/components/forms/Button'
+import ChatBoxLoading from '@/components/common/ChatBoxLoading'
 import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
 import { RxDoubleArrowDown } from 'react-icons/rx'
 import 'react-loading-skeleton/dist/skeleton.css'
-import ChatBoxLoading from '@/components/common/ChatBoxLoading'
 
 interface IChatBoxProps {
   mode: 'daibl' | 'gemini'
