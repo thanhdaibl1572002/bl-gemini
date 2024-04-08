@@ -11,7 +11,6 @@ const nextConfig = {
         appId: process.env.appId,
         measurementId: process.env.measurementId,
         geminiApiKey: process.env.geminiApiKey,
-        anonymouslyUserLocalStorageKey: process.env.anonymouslyUserLocalStorageKey,
         daiblServerUrl: process.env.daiblServerUrl,
     },
 };
