@@ -81,27 +81,33 @@ const Footer: FC<IFooterProps> = ({
             maxOutputTokens: 1000,
           },
         })
-        const result = chat.sendMessageStream(text)
-        let resultText = ''
-        let charIndex = 0
-        for await (const chunk of (await result).stream) {
-          if (!isRunning) break
-          let chunkText = chunk.text()
-          resultText += chunkText
-          const intervalId = setInterval(() => {
-            charIndex++
-            chunkText = ''
-            dispatch(setDisplayText(resultText.slice(0, charIndex)))
-            if (charIndex >= resultText.length || !isRunning) {
-              clearInterval(intervalId)
-              intervalCount--
-              if (intervalCount === 0) {
-                dispatch(setIsGenerating(false))
-                dispatch(setIsComplete(true))
+        try {
+          const result = chat.sendMessageStream(text)
+          let resultText = ''
+          let charIndex = 0
+          for await (const chunk of (await result).stream) {
+            if (!isRunning) break
+            let chunkText = chunk.text()
+            resultText += chunkText
+            const intervalId = setInterval(() => {
+              charIndex++
+              chunkText = ''
+              dispatch(setDisplayText(resultText.slice(0, charIndex)))
+              if (charIndex >= resultText.length || !isRunning) {
+                clearInterval(intervalId)
+                intervalCount--
+                if (intervalCount === 0) {
+                  dispatch(setIsGenerating(false))
+                  dispatch(setIsComplete(true))
+                }
               }
-            }
-          }, 30)
-          intervalCount++
+            }, 30)
+            intervalCount++
+          }
+        } catch (error) {
+          dispatch(setDisplayText('Xin lỗi, tôi không thể trả lời câu hỏi của bạn.'))
+          dispatch(setIsGenerating(false))
+          dispatch(setIsComplete(true))
         }
       })()
     }

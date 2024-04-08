@@ -7,8 +7,6 @@ import { ref, remove, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { useAppDispatch } from '@/redux'
 import { deleteSessionTitle, updateSessionTitle } from '@/redux/slices/sessionSlice'
-import { setMessages } from '@/redux/slices/messageSlice'
-import { getLimitedMessages } from '@/firebase/query'
 
 interface ISessionTitleItemProps {
     mode?: 'daibl' | 'gemini',
@@ -66,10 +64,6 @@ const SessionTitleItem: FC<ISessionTitleItemProps> = ({
             await remove(titleRef)
             await remove(sessionRef)
             dispatch(deleteSessionTitle(sessionID))
-            // if (currentSessionID === sessionID) {
-            //     const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
-            //     dispatch(setMessages(limitMessages))
-            // }
         } catch (error) {
             throw error
         }

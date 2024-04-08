@@ -11,14 +11,7 @@ export const metadata: Metadata = {
 }
 
 const DAIBLLayout: FC<IDAIBLLayoutProps> = ({ children }) => {
-
-    return (
-        <html lang='en'>
-            <body>
-                {children}
-            </body>
-        </html>
-    )
+    return <>{children}</>
 }
 
 export default DAIBLLayout

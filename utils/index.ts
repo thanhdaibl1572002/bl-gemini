@@ -1,5 +1,5 @@
 import { IMessage } from '@/interfaces/message'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from '@google/generative-ai'
 
 export const convertMessagesToHistories = (messages: Array<IMessage>) => {
   const userHistories = messages.filter(message => message.role === 'user').map(({ message }) => ({ text: message }))
@@ -7,8 +7,15 @@ export const convertMessagesToHistories = (messages: Array<IMessage>) => {
   return { userHistories, aiHistories }
 }
 
+const safetySettings = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+  },
+]
+
 export const genAI = new GoogleGenerativeAI(process.env.geminiApiKey as string)
-export const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+export const model = genAI.getGenerativeModel({ model: 'gemini-pro', safetySettings })
 
 const responses = [
   'Tôi nghĩ bình luận "#c%o&m@m*e!n$t" của bạn mang cảm xúc #p%r&i@d*i!c$t.',

@@ -1,4 +1,4 @@
-import { child, get, limitToFirst, limitToLast, orderByKey, query, ref } from 'firebase/database'
+import { child, get, limitToLast, query, ref } from 'firebase/database'
 import { IMessage } from '@/interfaces/message'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { ISessionTitle } from '@/interfaces/sessionTitle'
@@ -12,6 +12,7 @@ export const getLimitedMessages = async (
     try {
         const sessionRef = child(ref(firebaseRealtimeDatabase), `${mode}/${userID}/sessions/${sessionID}`)
         const q = query(sessionRef, limitToLast(limit))
+        // console.log(limit)
         const snapshot = await get(q)
         if (snapshot.exists()) {
             const data = snapshot.val()

@@ -11,14 +11,7 @@ export const metadata: Metadata = {
 }
 
 const GeminiLayout: FC<IGeminiLayoutProps> = ({ children }) => {
-
-    return (
-        <html lang='en'>
-            <body>
-                {children}
-            </body>
-        </html>
-    )
+    return <>{children}</>
 }
 
 export default GeminiLayout

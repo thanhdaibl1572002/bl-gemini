@@ -21,6 +21,9 @@ const SessionSlice = createSlice({
         setSessionTitles(state, action: PayloadAction<Array<ISessionTitle>>) {
             state.sessionTitles = action.payload
         },
+        addSessionTitle(state, action: PayloadAction<ISessionTitle>) {
+            state.sessionTitles.unshift(action.payload)
+        },
         updateSessionTitle(state, action: PayloadAction<ISessionTitle>) {
             const index = state.sessionTitles.findIndex((title) => title.sessionID === action.payload.sessionID)
             if (index !== -1) {
@@ -34,5 +37,5 @@ const SessionSlice = createSlice({
 })
 
 
-export const { setIsShowing, setSessionTitles, updateSessionTitle, deleteSessionTitle } = SessionSlice.actions
+export const { setIsShowing, setSessionTitles, addSessionTitle, updateSessionTitle, deleteSessionTitle } = SessionSlice.actions
 export default SessionSlice.reducer

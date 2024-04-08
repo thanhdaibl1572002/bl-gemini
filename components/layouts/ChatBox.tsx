@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { FC, useEffect } from 'react'
+import { FC, UIEvent, useEffect, useRef, useState } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/messageSlice'
@@ -23,8 +23,8 @@ const ChatBox: FC<IChatBoxProps> = ({
 }) => {
 
   const { messages } = useAppSelector(state => state.message)
-
   const dispatch = useAppDispatch()
+  const chatBoxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(setIsShowing(false));
@@ -34,9 +34,38 @@ const ChatBox: FC<IChatBoxProps> = ({
     })()
   }, [])
 
+  // const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
+
+  // const handleScroll = async () => {
+  //   if (isLoadingMore || !chatBoxRef.current) return
+  //   const chatBox = chatBoxRef.current
+  //   const isScrolledToTop = chatBox.scrollTop === 0
+
+  //   if (isScrolledToTop) {
+  //     setIsLoadingMore(true)
+  //     const nextMessageNumbers = messages.length + 10
+  //     const nextMessages = await getLimitedMessages(mode, userID, sessionID, nextMessageNumbers)
+  //     dispatch(setMessages(nextMessages))
+  //     setIsLoadingMore(false)
+  //     requestAnimationFrame(() => {
+  //       chatBox.scrollTo({ top: 0 })
+  //     })
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const chatBox = chatBoxRef.current
+  //   if (!chatBox) return
+
+  //   chatBox.addEventListener('scroll', handleScroll)
+
+  //   return () => chatBox.removeEventListener('scroll', handleScroll)
+  // }, [chatBoxRef.current, messages.length])
+
+  // console.log(messages)
 
   return (
-    <div className={styles[`_container__${mode}`]}>
+    <div className={styles[`_container__${mode}`]} ref={chatBoxRef}>
       {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':

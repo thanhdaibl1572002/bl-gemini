@@ -2,13 +2,11 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import styles from '@/components/layouts/sessions.module.sass'
 import Button from '../forms/Button'
-import { CiBoxList, CiEdit } from 'react-icons/ci'
-import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
+import { blackColor, daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
 import { useAppDispatch, useAppSelector } from '@/redux'
-import { setIsShowing, setSessionTitles } from '@/redux/slices/sessionSlice'
+import { addSessionTitle, setIsShowing, setSessionTitles } from '@/redux/slices/sessionSlice'
 import { getLimitedSessionTitles } from '@/firebase/query'
-import { IoAddOutline, IoCheckmark, IoCloseOutline } from 'react-icons/io5'
-import Link from 'next/link'
+import { IoAddOutline } from 'react-icons/io5'
 import SessionItem from './SessionItem'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { push, ref, set } from 'firebase/database'
@@ -34,13 +32,15 @@ const Sessions: FC<ISessionProps> = ({
 
     const sessionRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
+    const backgroundRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (sessionRef.current && listRef.current) {
+        if (sessionRef.current && listRef.current && backgroundRef.current) {
             if (isShowing) {
                 sessionRef.current.style.opacity = '1'
                 sessionRef.current.style.visibility = 'visible'
                 listRef.current.style.left = '0'
+                backgroundRef.current.style.background = getColorLevel(blackColor, 10)
             } else {
                 sessionRef.current.style.opacity = '0'
                 sessionRef.current.style.visibility = 'hidden'
@@ -68,14 +68,21 @@ const Sessions: FC<ISessionProps> = ({
             message: mode === 'daibl' ? '<h2>Xin chào, tôi là <strong>DAIBL</strong>, tôi có thể giúp dự đoán cảm xúc <strong>tích cực</strong>, <strong>tiêu cực</strong> hoặc <strong>trung lập</strong> của bình luận.' : '<h2>Xin chào, tôi là <strong>Gemini</strong>.',
         })
         const titleRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/titles/${newSessionID}`)
-        await set(titleRef,`${randomTitle} Cuộc trò chuyện mới`)
+        const newTitle = `${randomTitle} Cuộc trò chuyện mới`
+        await set(titleRef, newTitle)
+
+        dispatch(addSessionTitle({ sessionID: newSessionID!, title: newTitle }))
 
         router.push(`/${mode}/${userID}/${newSessionID}`)
     }
 
     return (
         <div className={styles[`_container__${mode}`]} ref={sessionRef}>
-            <div className={styles._background} onClick={() => dispatch(setIsShowing(false))}></div>
+            <div 
+            className={styles._background} 
+            ref={backgroundRef} 
+            onClick={() => dispatch(setIsShowing(false))}
+            ></div>
             <div className={styles._list} ref={listRef}>
                 <Button
                     buttonIcon={<IoAddOutline />}

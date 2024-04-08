@@ -4,13 +4,16 @@ import styles from '@/app/gemini/[...ids]/gemini.module.sass'
 import Header from '@/components/layouts/Header'
 import ChatBox from '@/components/layouts/ChatBox'
 import Footer from '@/components/layouts/Footer'
-import Sessions from '@/components/layouts/Sessions'
+// import Sessions from '@/components/layouts/Sessions'
+import dynamic from 'next/dynamic'
 
 interface IGeminiProps {
     params: {
         ids: Array<string>
     }
 }
+
+const Sessions = dynamic(() => import('@/components/layouts/Sessions'))
 
 const Gemini: FC<IGeminiProps> = ({ params }) => {
 
