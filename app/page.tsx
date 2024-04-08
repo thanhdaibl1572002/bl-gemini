@@ -1,16 +1,19 @@
 'use client'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { firebaseRealtimeDatabase, firebaseAuth } from '@/firebase'
 import { signInAnonymously } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { push, ref, set } from 'firebase/database'
 import { getLatestSessionID } from '@/firebase/query'
+import Loading from '@/components/common/Loading'
 
 const Home: FC = () => {
 
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     useEffect(() => {
+        setIsLoading(true);
         (async (): Promise<void> => {
             const userID = (await signInAnonymously(firebaseAuth)).user.uid
             if (userID) {
@@ -31,13 +34,28 @@ const Home: FC = () => {
                     const titleRef = ref(firebaseRealtimeDatabase, `daibl/${userID}/titles/${newSessionID}`)
                     await set(titleRef, `${randomTitle} Cuộc trò chuyện mới`)
 
+                    setIsLoading(false)
+
                     router.push(`daibl/${userID}/${newSessionID}`)
                 }
             }
         })()
     }, [])
 
-    return <></>
+    return (
+        <>
+            {isLoading && (
+                <div style={{
+                    width: '100vw',
+                    height: '100vh',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <Loading mode={'daibl'} />
+                  </div>
+            )}
+        </>
+    )
 }
 
 export default Home
