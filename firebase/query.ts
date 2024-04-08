@@ -1,4 +1,4 @@
-import { child, endAt, endBefore, get, limitToFirst, limitToLast, orderByKey, query, ref, startAt } from 'firebase/database'
+import { child, endBefore, get, limitToLast, orderByKey, query, ref } from 'firebase/database'
 import { IMessage } from '@/interfaces/message'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { ISessionTitle } from '@/interfaces/sessionTitle'
