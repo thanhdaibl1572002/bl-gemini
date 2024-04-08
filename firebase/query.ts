@@ -1,4 +1,4 @@
-import { child, get, limitToLast, query, ref } from 'firebase/database'
+import { child, endAt, endBefore, get, limitToFirst, limitToLast, orderByKey, query, ref, startAt } from 'firebase/database'
 import { IMessage } from '@/interfaces/message'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { ISessionTitle } from '@/interfaces/sessionTitle'
@@ -12,18 +12,44 @@ export const getLimitedMessages = async (
     try {
         const sessionRef = child(ref(firebaseRealtimeDatabase), `${mode}/${userID}/sessions/${sessionID}`)
         const q = query(sessionRef, limitToLast(limit))
-        // console.log(limit)
         const snapshot = await get(q)
         if (snapshot.exists()) {
             const data = snapshot.val()
             const messages: Array<IMessage> = Object.entries(data).map(([key, value]) => ({
+                key: key,
                 role: (value as IMessage).role,
                 message: (value as IMessage).message,
             }))
             return messages
-        } else {
-            return []
+        } 
+        return []
+    } catch (error) {
+        throw error
+    }
+}
+
+export const getLimitedMoreMessages = async (
+    mode: 'daibl' | 'gemini',
+    userID: string,
+    sessionID: string,
+    endKey: string,
+    limit: number = 10,
+): Promise<Array<IMessage>> => {
+    try {
+        const sessionRef = child(ref(firebaseRealtimeDatabase), `${mode}/${userID}/sessions/${sessionID}`)
+        const q = query(sessionRef, orderByKey(), endBefore(endKey), limitToLast(limit))
+        const snapshot = await get(q)
+        if (snapshot.exists()) {
+            const data = snapshot.val()
+            console.log(data)
+            const messages: Array<IMessage> = Object.entries(data).map(([key, value]) => ({
+                key: key,
+                role: (value as IMessage).role,
+                message: (value as IMessage).message,
+            }))
+            return messages
         }
+        return []
     } catch (error) {
         throw error
     }

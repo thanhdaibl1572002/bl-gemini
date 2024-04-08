@@ -1,14 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/messageSlice'
-import { getLimitedMessages } from '@/firebase/query'
+import { getLimitedMessages, getLimitedMoreMessages } from '@/firebase/query'
 import GenerateMessage from '@/components/common/GenerateMessage'
 import UserMessage from '@/components/common/UserMessage'
 import AIMessage from '@/components/common/AIMessage'
 import { setIsShowing } from '@/redux/slices/sessionSlice'
+import LoadMore from '../common/LoadMore'
+import Button from '../forms/Button'
+import { CiBoxList } from 'react-icons/ci'
+import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
+import { IoChevronDown } from 'react-icons/io5'
+import { RxDoubleArrowDown } from 'react-icons/rx'
 
 interface IChatBoxProps {
   mode: 'daibl' | 'gemini'
@@ -25,6 +31,7 @@ const ChatBox: FC<IChatBoxProps> = ({
   const { messages } = useAppSelector(state => state.message)
   const dispatch = useAppDispatch()
   const chatBoxRef = useRef<HTMLDivElement>(null)
+  const scrollEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     dispatch(setIsShowing(false));
@@ -34,38 +41,70 @@ const ChatBox: FC<IChatBoxProps> = ({
     })()
   }, [])
 
-  // const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
+  const [isLoadMore, setIsLoadMore] = useState<boolean>(false)
 
-  // const handleScroll = async () => {
-  //   if (isLoadingMore || !chatBoxRef.current) return
-  //   const chatBox = chatBoxRef.current
-  //   const isScrolledToTop = chatBox.scrollTop === 0
+  useEffect(() => {
+    const chatBox = chatBoxRef.current
+    if (!chatBox) return
 
-  //   if (isScrolledToTop) {
-  //     setIsLoadingMore(true)
-  //     const nextMessageNumbers = messages.length + 10
-  //     const nextMessages = await getLimitedMessages(mode, userID, sessionID, nextMessageNumbers)
-  //     dispatch(setMessages(nextMessages))
-  //     setIsLoadingMore(false)
-  //     requestAnimationFrame(() => {
-  //       chatBox.scrollTo({ top: 0 })
-  //     })
-  //   }
-  // }
+    const handleScroll = async () => {
+      if (isLoadMore || !chatBoxRef.current) return
+      const chatBox = chatBoxRef.current
+      const isScrolledToTop = chatBox.scrollTop === 0
 
-  // useEffect(() => {
-  //   const chatBox = chatBoxRef.current
-  //   if (!chatBox) return
+      if (isScrolledToTop) {
+        setIsLoadMore(true)
+        const moreMessages = await getLimitedMoreMessages(mode, userID, sessionID, messages[0].key!)
+        if (moreMessages.length === 0) {
+          setIsLoadMore(false)
+          return 
+        }
+        dispatch(setMessages([...moreMessages, ...messages]))
+        setIsLoadMore(false)
+        const currentScrollTop = chatBox.scrollTop
+        const currentScrollHeight = chatBox.scrollHeight
+        requestAnimationFrame(() => {
+          const newScrollTop = currentScrollTop + (chatBox.scrollHeight - currentScrollHeight)
+          chatBox.scrollTop = newScrollTop
+        })
+      }
 
-  //   chatBox.addEventListener('scroll', handleScroll)
+      if (scrollEndRef.current) {
+        chatBox.scrollTop < chatBox.scrollHeight - chatBox.clientHeight - 10
+        ? scrollEndRef.current.style.display = 'flex'
+        : scrollEndRef.current.style.display = 'none'
+      }
+    }
 
-  //   return () => chatBox.removeEventListener('scroll', handleScroll)
-  // }, [chatBoxRef.current, messages.length])
+    chatBox.addEventListener('scroll', handleScroll)
 
-  // console.log(messages)
+    return () => chatBox.removeEventListener('scroll', handleScroll)
+  }, [chatBoxRef.current, messages.length])
+
+  const handleScrollEnd = (): void => {
+    const chatBox = chatBoxRef.current
+    if (chatBox)
+      chatBox.scrollTop = chatBox.scrollHeight - chatBox.clientHeight
+  }
 
   return (
     <div className={styles[`_container__${mode}`]} ref={chatBoxRef}>
+      <div className={styles._scroll__end} ref={scrollEndRef}>
+        <Button
+          buttonClassName={styles._show}
+          buttonIcon={useMemo(() => <RxDoubleArrowDown />, [])}
+          buttonIconColor={mode === 'daibl' ? daiblColor : geminiColor}
+          buttonIconSize={20}
+          buttonWidth={38}
+          buttonHeight={38}
+          buttonBackground={whiteColor}
+          buttonBorderRadius={'50%'}
+          buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
+          buttonBubbleColor={daiblColor}
+          onClick={handleScrollEnd}
+        />
+      </div>
+      {isLoadMore && <LoadMore mode={mode} />}
       {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':

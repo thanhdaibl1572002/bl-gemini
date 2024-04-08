@@ -30,8 +30,6 @@ const AIMessage: FC<IAIMessageProps> = ({
         content && navigator.clipboard.writeText(content.replace(/\s+/g, ' ').trim())
     }
 
-
-
     return (
         <div className={styles[`_container__${mode}`]} ref={messageRef}>
             <MessageTitle mode={mode} />
