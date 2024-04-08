@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { FC, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/messageSlice'
@@ -11,10 +11,10 @@ import AIMessage from '@/components/common/AIMessage'
 import { setIsShowing } from '@/redux/slices/sessionSlice'
 import LoadMore from '../common/LoadMore'
 import Button from '../forms/Button'
-import { CiBoxList } from 'react-icons/ci'
 import { daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
-import { IoChevronDown } from 'react-icons/io5'
 import { RxDoubleArrowDown } from 'react-icons/rx'
+import 'react-loading-skeleton/dist/skeleton.css'
+import ChatBoxLoading from '@/components/common/ChatBoxLoading'
 
 interface IChatBoxProps {
   mode: 'daibl' | 'gemini'
@@ -57,7 +57,7 @@ const ChatBox: FC<IChatBoxProps> = ({
         const moreMessages = await getLimitedMoreMessages(mode, userID, sessionID, messages[0].key!)
         if (moreMessages.length === 0) {
           setIsLoadMore(false)
-          return 
+          return
         }
         dispatch(setMessages([...moreMessages, ...messages]))
         setIsLoadMore(false)
@@ -71,8 +71,8 @@ const ChatBox: FC<IChatBoxProps> = ({
 
       if (scrollEndRef.current) {
         chatBox.scrollTop < chatBox.scrollHeight - chatBox.clientHeight - 10
-        ? scrollEndRef.current.style.display = 'flex'
-        : scrollEndRef.current.style.display = 'none'
+          ? scrollEndRef.current.style.display = 'flex'
+          : scrollEndRef.current.style.display = 'none'
       }
     }
 
@@ -105,7 +105,7 @@ const ChatBox: FC<IChatBoxProps> = ({
         />
       </div>
       {isLoadMore && <LoadMore mode={mode} />}
-      {messages && messages.length > 0 && messages.map((mes, mesIndex) => {
+      {messages && messages.length > 0 ? messages.map((mes, mesIndex) => {
         switch (mes.role) {
           case 'ai':
             if (mes.message) {
@@ -118,7 +118,9 @@ const ChatBox: FC<IChatBoxProps> = ({
           default:
             return null
         }
-      })}
+      }) : (
+        <ChatBoxLoading mode={mode} />
+      )}
     </div>
   )
 }

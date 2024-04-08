@@ -2,7 +2,7 @@
 'use client'
 import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from 'react'
 import styles from '@/components/layouts/footer.module.sass'
-import { daiblGradientColor, geminiGradientColor, whiteColor } from '@/variables/variables'
+import { daiblColor, daiblGradientColor, geminiColor, geminiGradientColor, getColorLevel, whiteColor } from '@/variables/variables'
 import { useAppSelector } from '@/redux'
 import { useAppDispatch } from '@/redux'
 import Button from '@/components/forms/Button'
@@ -11,6 +11,7 @@ import { push, ref, set } from 'firebase/database'
 import { firebaseRealtimeDatabase } from '@/firebase'
 import { CiPaperplane } from 'react-icons/ci'
 import { daiblResponseText, convertMessagesToHistories, model } from '@/utils'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import axios from 'axios'
 
 interface IFooterProps {
@@ -148,7 +149,7 @@ const Footer: FC<IFooterProps> = ({
 
   return (
     <div className={styles[`_container__${mode}`]}>
-      {messages && messages.length > 0 && (
+      {messages && messages.length > 0 ? (
         <>
           <textarea
             placeholder={mode === 'daibl' ? 'Phân loại bình luận với DAIBL' : 'Trò chuyện với Gemini AI'}
@@ -169,6 +170,13 @@ const Footer: FC<IFooterProps> = ({
             onClick={handleSend}
           />
         </>
+      ) : (
+        <SkeletonTheme
+          baseColor={getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 5)}
+          highlightColor="#ffffff"
+        >
+          <Skeleton containerClassName={styles._loading} />
+        </SkeletonTheme>
       )}
     </div>
   )
