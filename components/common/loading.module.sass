@@ -1,0 +1,39 @@
+@import ../../variables/variables
+
+._container__daibl,
+._container__gemini
+    align-items: center
+    column-gap: 10px
+    font-size: 15.5px
+
+    ._loader
+        width: 30px
+        aspect-ratio: 1
+        border-radius: 50%
+        border: 3.5px solid #0000
+        position: relative
+        animation: l24 1s infinite linear
+
+        &::before, &::after
+            content: ''
+            position: absolute
+            inset: -3.5px
+            border-radius: 50%
+            border: inherit
+            animation: inherit
+            animation-duration: 1s
+
+        &::after
+            animation-duration: 2s
+
+@keyframes l24
+    100%
+        transform: rotate(1turn)
+
+._container__daibl
+    ._loader
+        border-right-color: get-color-level($daibl-color, 80)
+
+._container__gemini
+    ._loader
+        border-right-color: get-color-level($gemini-color, 80)
