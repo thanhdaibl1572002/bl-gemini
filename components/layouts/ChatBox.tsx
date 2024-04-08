@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { FC, UIEvent, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import styles from '@/components/layouts/chatbox.module.sass'
 import { useAppDispatch, useAppSelector } from '@/redux'
 import { setMessages } from '@/redux/slices/messageSlice'
