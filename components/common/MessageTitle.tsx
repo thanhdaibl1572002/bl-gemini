@@ -1,6 +1,6 @@
 import { FC, memo } from 'react'
 import styles from '@/components/common/message-title.module.sass'
-import Logo from '../layouts/Logo'
+import Logo from '@/components/layouts/Logo'
 import { SiNintendogamecube } from 'react-icons/si'
 import { RiBardLine, RiLoaderLine } from 'react-icons/ri'
 import { daiblColor, geminiColor } from '@/variables/variables'

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import styles from '@/components/layouts/header.module.sass'
 import Logo from '@/components/layouts/Logo'
 import Button from '@/components/forms/Button'
