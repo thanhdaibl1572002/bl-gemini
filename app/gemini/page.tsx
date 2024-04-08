@@ -47,7 +47,7 @@ const Gemini: FC = () => {
             {isLoading && (
                 <div style={{
                     width: '100vw',
-                    height: '100vh',
+                    height: '90vh',
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}>
