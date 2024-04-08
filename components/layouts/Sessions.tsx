@@ -57,31 +57,33 @@ const Sessions: FC<ISessionProps> = ({
     }, [])
 
     const handleAddSession = async (): Promise<void> => {
-        const initTitles = ['😊', '❤️', '😄', '🥰', '😁', '😆', '😂', '😃', '😀', '😉', '😋', '😎', '😇', '🤩']
-        const randomTitle = initTitles[Math.floor(Math.random() * initTitles.length)]
-        const sessionsRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions`)
-                        
-        const newSessionRef = push(push(sessionsRef))
-        const newSessionID = newSessionRef.parent?.key
-        await set(newSessionRef, {
-            role: 'ai',
-            message: mode === 'daibl' ? '<h2>Xin chào, tôi là <strong>DAIBL</strong>, tôi có thể giúp dự đoán cảm xúc <strong>tích cực</strong>, <strong>tiêu cực</strong> hoặc <strong>trung lập</strong> của bình luận.' : '<h2>Xin chào, tôi là <strong>Gemini</strong>.',
-        })
-        const titleRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/titles/${newSessionID}`)
-        const newTitle = `${randomTitle} Cuộc trò chuyện mới`
-        await set(titleRef, newTitle)
+        if (sessionTitles.length < 10) {
+            const initTitles = ['😊', '❤️', '😄', '🥰', '😁', '😆', '😂', '😃', '😀', '😉', '😋', '😎', '😇', '🤩']
+            const randomTitle = initTitles[Math.floor(Math.random() * initTitles.length)]
+            const sessionsRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/sessions`)
 
-        dispatch(addSessionTitle({ sessionID: newSessionID!, title: newTitle }))
+            const newSessionRef = push(push(sessionsRef))
+            const newSessionID = newSessionRef.parent?.key
+            await set(newSessionRef, {
+                role: 'ai',
+                message: mode === 'daibl' ? '<h2>Xin chào, tôi là <strong>DAIBL</strong>, tôi có thể giúp dự đoán cảm xúc <strong>tích cực</strong>, <strong>tiêu cực</strong> hoặc <strong>trung lập</strong> của bình luận.' : '<h2>Xin chào, tôi là <strong>Gemini</strong>.',
+            })
+            const titleRef = ref(firebaseRealtimeDatabase, `${mode}/${userID}/titles/${newSessionID}`)
+            const newTitle = `${randomTitle} Cuộc trò chuyện mới`
+            await set(titleRef, newTitle)
 
-        router.push(`/${mode}/${userID}/${newSessionID}`)
+            dispatch(addSessionTitle({ sessionID: newSessionID!, title: newTitle }))
+
+            router.push(`/${mode}/${userID}/${newSessionID}`)
+        }
     }
 
     return (
         <div className={styles[`_container__${mode}`]} ref={sessionRef}>
-            <div 
-            className={styles._background} 
-            ref={backgroundRef} 
-            onClick={() => dispatch(setIsShowing(false))}
+            <div
+                className={styles._background}
+                ref={backgroundRef}
+                onClick={() => dispatch(setIsShowing(false))}
             ></div>
             <div className={styles._list} ref={listRef}>
                 <Button
@@ -97,10 +99,11 @@ const Sessions: FC<ISessionProps> = ({
                     buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
                     buttonBubbleColor={daiblColor}
                     onClick={handleAddSession}
+                    disabled={sessionTitles.length >= 10}
                 />
                 <ul>
                     {sessionTitles && sessionTitles.length > 0 && sessionTitles.map((sessionTitle, sessionTitleIndex) => (
-                        <SessionItem 
+                        <SessionItem
                             key={sessionTitleIndex}
                             mode={mode}
                             userID={userID}
