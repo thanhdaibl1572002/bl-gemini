@@ -59,7 +59,7 @@ const Footer: FC<IFooterProps> = ({
         intervalCount++
       })()
     }
-  }, [isGenerating, mode])
+  }, [isGenerating])
 
   useEffect(() => {
     let isRunning: boolean = true
@@ -117,8 +117,6 @@ const Footer: FC<IFooterProps> = ({
     }
   }, [isGenerating])
 
-  // console.log('isComplete: ', isComplete, ' | isGenerating: ', isGenerating, ' | displayText: ', displayText)
-
   useEffect(() => {
     if (isComplete && !isGenerating && displayText.trim()) {
       dispatch(setDisplayText(''))
@@ -132,7 +130,6 @@ const Footer: FC<IFooterProps> = ({
       })()
     }
   }, [isComplete, isGenerating, displayText])
-
 
   const handleSend = (): void => {
     dispatch(setIsGenerating(true))

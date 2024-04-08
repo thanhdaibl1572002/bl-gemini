@@ -33,13 +33,43 @@ const ChatBox: FC<IChatBoxProps> = ({
   const chatBoxRef = useRef<HTMLDivElement>(null)
   const scrollEndRef = useRef<HTMLDivElement>(null)
 
+  const indexDBName = process.env.indexedDBName as string
+  const storeName = process.env.indexedDBStoreName as string
+
+  const [db, setDb] = useState<IDBDatabase | null>(null)
+
   useEffect(() => {
     dispatch(setIsShowing(false));
-    (async () => {
-      const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
-      dispatch(setMessages(limitMessages))
-    })()
+    const request = indexedDB.open(indexDBName)
+    request.onupgradeneeded = () => {
+      const db = request.result
+      db.createObjectStore(storeName)
+    }
+    request.onsuccess = () => {
+      setDb(request.result)
+      const transaction = request.result.transaction(storeName, 'readonly')
+      const store = transaction.objectStore(storeName)
+      const getRequest = store.get(`${mode}/${userID}/${sessionID}`)
+      getRequest.onsuccess = async () => {
+        const cachingMessages = getRequest.result
+        if (cachingMessages && cachingMessages.length > 0) {
+          dispatch(setMessages(cachingMessages))
+        } else {
+          const limitMessages = await getLimitedMessages(mode, userID, sessionID, 10)
+          dispatch(setMessages(limitMessages))
+        }
+      }
+      getRequest.onerror = () => console.log(getRequest.error)
+    }
+    request.onerror = () => console.error('Error', request.error)
   }, [])
+
+  useEffect(() => {
+    if (!db) return
+    const transaction = db.transaction(storeName, 'readwrite')
+    const store = transaction.objectStore(storeName)
+    store.put(messages.slice(-10), `${mode}/${userID}/${sessionID}`)
+  }, [messages])
 
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false)
 

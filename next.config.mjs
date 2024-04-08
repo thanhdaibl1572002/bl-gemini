@@ -12,6 +12,8 @@ const nextConfig = {
         measurementId: process.env.measurementId,
         geminiApiKey: process.env.geminiApiKey,
         daiblServerUrl: process.env.daiblServerUrl,
+        indexedDBName: process.env.indexedDBName,
+        indexedDBStoreName: process.env.indexedDBStoreName,
     },
 };
 

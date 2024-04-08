@@ -1,5 +1,5 @@
 'use client'
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import styles from '@/components/layouts/sessions.module.sass'
 import Button from '@/components/forms/Button'
 import { blackColor, daiblColor, geminiColor, getColorLevel, whiteColor } from '@/variables/variables'
@@ -30,6 +30,11 @@ const Sessions: FC<ISessionProps> = ({
 
     const { isShowing, sessionTitles } = useAppSelector(state => state.session)
 
+    const [db, setDb] = useState<IDBDatabase | null>(null)
+
+    const indexDBName = process.env.indexedDBName as string
+    const storeName = process.env.indexedDBStoreName as string  
+
     const sessionRef = useRef<HTMLDivElement>(null)
     const listRef = useRef<HTMLDivElement>(null)
     const backgroundRef = useRef<HTMLDivElement>(null)
@@ -49,12 +54,53 @@ const Sessions: FC<ISessionProps> = ({
         }
     }, [isShowing])
 
+    
     useEffect(() => {
-        (async (): Promise<void> => {
-            const limitTitles = await getLimitedSessionTitles(mode, userID, 10)
-            dispatch(setSessionTitles(limitTitles))
-        })()
-    }, [])
+        dispatch(setIsShowing(false));
+        const request = indexedDB.open(indexDBName)
+        request.onupgradeneeded = () => {
+          const db = request.result
+          db.createObjectStore(storeName)
+        }
+        request.onsuccess = () => {
+          setDb(request.result)
+          const transaction = request.result.transaction(storeName, 'readonly')
+          const store = transaction.objectStore(storeName)
+          const getRequest = store.get(`${mode}/${userID}`)
+          getRequest.onsuccess = async () => {
+            const cachingTitles = getRequest.result
+            if (cachingTitles && cachingTitles.length > 0) {
+                dispatch(setSessionTitles(cachingTitles))
+            } else {
+                const limitTitles = await getLimitedSessionTitles(mode, userID, 10)
+                dispatch(setSessionTitles(limitTitles))
+            }
+          }
+          getRequest.onerror = () => console.log(getRequest.error)
+        }
+        request.onerror = () => console.error('Error', request.error)
+      }, [])
+
+      useEffect(() => {
+        if (!db) return
+        const transaction = db.transaction(storeName, 'readwrite')
+        const store = transaction.objectStore(storeName)
+        store.put(sessionTitles.slice(-10), `${mode}/${userID}`)
+      }, [sessionTitles])
+    
+    //   useEffect(() => {
+    //     if (!db) return
+    //     const transaction = db.transaction(storeName, 'readwrite')
+    //     const store = transaction.objectStore(storeName)
+    //     store.put(messages, `${mode}/${userID}/${sessionID}`)
+    //   }, [messages])
+
+    // useEffect(() => {
+    //     (async (): Promise<void> => {
+            // const limitTitles = await getLimitedSessionTitles(mode, userID, 10)
+            // dispatch(setSessionTitles(limitTitles))
+    //     })()
+    // }, [])
 
     const handleAddSession = async (): Promise<void> => {
         if (sessionTitles.length < 10) {
