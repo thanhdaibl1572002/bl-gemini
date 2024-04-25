@@ -1,0 +1,48 @@
+@import ../../variables/variables
+
+._container
+    width: 700px
+    height: 100vh
+    flex-direction: column
+    row-gap: 30px
+    padding: 20px
+    background: $white-color
+    position: relative
+    border-left: 1px solid get-color-level($daibl-color, 10)
+    border-right: 1px solid get-color-level($daibl-color, 10)
+    overflow-y: scroll
+    overflow-x: hidden
+
+    h1
+        text-transform: uppercase
+        font-size: 24px
+        font-weight: 400
+
+    ._row
+        display: grid
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+        row-gap: 25px
+        column-gap: 15px
+
+        ._col
+            border: 1px solid get-color-level($daibl-color, 15)
+            padding: 15px
+            border-radius: 5px
+            position: relative
+            flex-wrap: wrap
+            row-gap: 15px
+
+            strong
+                position: absolute
+                top: -7.6px
+                left: 15px
+                text-transform: capitalize
+                font-size: 12px
+                font-weight: 400
+                background: $white-color
+                padding: 0 8px
+                border-radius: 2.5px
+
+    ._submit
+        justify-content: flex-end
+                
