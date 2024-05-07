@@ -60,7 +60,7 @@ const fillData0: IFormData = {
 const fillData1: IFormData = {
     CODE_GENDER: 'M',
     FLAG_OWN_CAR: 'N',
-    FLAG_OWN_REALTY: 'Y',
+    FLAG_OWN_REALTY: 'N',
     CNT_CHILDREN: 0,
     AMT_INCOME_TOTAL: 112500.0,
     NAME_INCOME_TYPE: 'Commercial associate',
