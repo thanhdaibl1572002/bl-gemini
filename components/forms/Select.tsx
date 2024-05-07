@@ -11,12 +11,13 @@ interface SelectItemCssProperties extends CSSProperties {
 
 interface Option {
   label: string
-  value: string | null
+  value: string | number | null
   icon?: ReactNode | ReactElement
 }
 
 export interface SelectProps {
   options: Option[]
+  value?: string | number | null
   width?: number | string
   height?: number | string
   background?: string
@@ -52,11 +53,12 @@ export interface SelectProps {
   listBorder?: string
   listBoxShadow?: string
   className?: string
-  onChange: (selectedValue: string | null) => void
+  onChange: (selectedValue: string | number | null) => void
 }
 
 const Select: FC<SelectProps> = ({
   options,
+  value = null,
   width = 150,
   height = 40,
   background,
@@ -92,7 +94,7 @@ const Select: FC<SelectProps> = ({
 }) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+  const [selectedValue, setSelectedValue] = useState<string | number | null>(null)
   const selectRef = useRef<HTMLDivElement>(null)
 
   const seletedLabel = options.find(option => option.value === selectedValue)?.label
@@ -110,11 +112,15 @@ const Select: FC<SelectProps> = ({
     }
   }, [])
 
-  const handleSelect = (value: string | null) => {
+  const handleSelect = (value: string | number | null) => {
     setSelectedValue(value)
     onChange(value)
     setIsOpen(false)
   }
+
+  useEffect(() => {
+    setSelectedValue(value)
+  }, [value])
 
   const itemStyles: SelectItemCssProperties = {
     minHeight: itemHeight,

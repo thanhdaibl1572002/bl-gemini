@@ -35,11 +35,11 @@ const Header: FC<IHeaderProps> = ({
           buttonHeight={38}
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? geminiColor : daiblColor, 10)}`}
-          buttonBubbleColor={geminiColor}
+          buttonBubbleColor={mode === 'daibl' ? geminiColor : daiblColor}
           buttonLink={mode === 'daibl' ? '/gemini' : '/'}
         />
 
-        {/* <Button
+        <Button
           buttonIcon={<CiCreditCard1 />}
           buttonIconColor={mode === 'daibl' ? daiblColor : geminiColor}
           buttonIconSize={28}
@@ -47,8 +47,9 @@ const Header: FC<IHeaderProps> = ({
           buttonHeight={38}
           buttonBackground={whiteColor}
           buttonBorder={`1px solid ${getColorLevel(mode === 'daibl' ? daiblColor : geminiColor, 10)}`}
-          buttonBubbleColor={daiblColor}
-        /> */}
+          buttonBubbleColor={mode === 'daibl' ? daiblColor : geminiColor}
+          buttonLink='/credit'
+        />
 
         <Button
           buttonClassName={styles._show}

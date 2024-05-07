@@ -1,15 +1,16 @@
 'use client'
-import { FC, memo, useState } from 'react'
+import { FC, memo, useEffect, useState } from 'react'
 import styles from '@/components/forms/radiogroup.module.sass'
 import { IoCheckmarkOutline } from 'react-icons/io5'
 
 interface Option {
   label: string
-  value: string
+  value: string | number
 }
 
 interface RadioGroupProps {
   options: Option[]
+  value?: string | number | null
   width?: number | string
   height?: number | string
   columnGap?: number
@@ -27,11 +28,12 @@ interface RadioGroupProps {
   textWeight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
   border?: string
   borderRadius?: number | string
-  onChange: (selectedValue: string) => void
+  onChange: (selectedValue: string | number | null) => void
 }
 
 const RadioGroup: FC<RadioGroupProps> = ({ 
   options, 
+  value = null,
   width = '100%',
   height,
   columnGap = 10,
@@ -51,12 +53,16 @@ const RadioGroup: FC<RadioGroupProps> = ({
   borderRadius = '50%',
   onChange 
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string>('')
+  const [selectedValue, setSelectedValue] = useState<string | number | null>(value)
 
-  const handleRadioChange = (optionValue: string) => {
+  const handleRadioChange = (optionValue: string | number) => {
     setSelectedValue(optionValue)
     onChange(optionValue)
   }
+
+  useEffect(() => {
+    setSelectedValue(value)
+  }, [value])
 
   return (
     <div

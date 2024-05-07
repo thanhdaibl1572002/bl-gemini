@@ -13,11 +13,16 @@
     overflow-y: scroll
     overflow-x: hidden
 
-    h1
-        text-transform: uppercase
-        font-size: 24px
-        font-weight: 400
-        text-align: center
+    ._title
+        justify-content: space-between
+        align-items: center
+        h1
+            text-transform: uppercase
+            font-size: 20px
+            font-weight: 400
+            text-align: center
+        ._fill
+            column-gap: 8px
 
     ._row
         display: grid
@@ -39,10 +44,17 @@
                 left: 15px
                 text-transform: capitalize
                 font-size: 12px
-                font-weight: 400
+                font-weight: 500
                 background: $white-color
+                color: $daibl-color
                 padding: 0 8px
                 border-radius: 2.5px
+                display: flex
+                column-gap: 3px
+
+                span
+                    color: $red-color
+                    font-size: 15px
 
     ._submit
         justify-content: flex-end

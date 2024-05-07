@@ -5,28 +5,76 @@ import RadioGroup from '@/components/forms/RadioGroup'
 import TextField from '@/components/forms/TextField'
 import Select from '@/components/forms/Select'
 import Button from '@/components/forms/Button'
-import { PiArrowFatRight } from 'react-icons/pi'
-import { daiblColor, redColor } from '@/variables/variables'
+import { PiArrowFatRight, PiCheck } from 'react-icons/pi'
+import { calculateDateFromDaysAgo, calculateDaysFromDate, getCurrentDate } from '@/utils'
+import { RiBardLine } from 'react-icons/ri'
+import { daiblColor, geminiColor, getColorLevel, greenColor, redColor, whiteColor } from '@/variables/variables'
+import { SiNintendogamecube } from 'react-icons/si'
+import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai'
+import { HiOutlineCheckCircle, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 
 interface ICreditProps {
 
 }
 
 interface IFormData {
-    CODE_GENDER: string | null
-    FLAG_OWN_CAR: number | null
-    FLAG_OWN_REALTY: number | null
-    CNT_CHILDREN: number | null
-    AMT_INCOME_TOTAL: number | null
-    NAME_INCOME_TYPE: string | null
-    NAME_EDUCATION_TYPE: string | null
-    NAME_FAMILY_STATUS: string | null
-    NAME_HOUSING_TYPE: string | null
-    DAYS_BIRTH: number | null
-    DAYS_EMPLOYED: number | null
-    OCCUPATION_TYPE: string | null
-    CNT_FAM_MEMBERS: number | null
-    ACCOUNT_AGE: number | null
+    CODE_GENDER: null | string
+    FLAG_OWN_CAR: null | string
+    FLAG_OWN_REALTY: null | string
+    CNT_CHILDREN: null | number
+    AMT_INCOME_TOTAL: null | number
+    NAME_INCOME_TYPE: null | string
+    NAME_EDUCATION_TYPE: null | string
+    NAME_FAMILY_STATUS: null | string
+    NAME_HOUSING_TYPE: null | string
+    DAYS_BIRTH: null | string | number
+    DAYS_EMPLOYED: null | string | number
+    FLAG_WORK_PHONE: null | 0 | 1
+    FLAG_PHONE: null | 0 | 1
+    FLAG_EMAIL: null | 0 | 1
+    OCCUPATION_TYPE: null | string
+    CNT_FAM_MEMBERS: null | number
+    MONTHS_BALANCE: null | string | number
+}
+
+const fillData0: IFormData = {
+    CODE_GENDER: 'F',
+    FLAG_OWN_CAR: 'Y',
+    FLAG_OWN_REALTY: 'Y',
+    CNT_CHILDREN: 0,
+    AMT_INCOME_TOTAL: 202500.0,
+    NAME_INCOME_TYPE: 'Commercial associate',
+    NAME_EDUCATION_TYPE: 'Secondary / secondary special',
+    NAME_FAMILY_STATUS: 'Separated',
+    NAME_HOUSING_TYPE: 'House \/ apartment',
+    DAYS_BIRTH: calculateDateFromDaysAgo(-18745),
+    DAYS_EMPLOYED: calculateDateFromDaysAgo(-3653),
+    FLAG_WORK_PHONE: 1,
+    FLAG_PHONE: 1,
+    FLAG_EMAIL: 1,
+    OCCUPATION_TYPE: 'Cleaning staff',
+    CNT_FAM_MEMBERS: 1.0,
+    MONTHS_BALANCE: calculateDateFromDaysAgo(-26),
+}
+
+const fillData1: IFormData = {
+    CODE_GENDER: 'M',
+    FLAG_OWN_CAR: 'N',
+    FLAG_OWN_REALTY: 'Y',
+    CNT_CHILDREN: 0,
+    AMT_INCOME_TOTAL: 112500.0,
+    NAME_INCOME_TYPE: 'Commercial associate',
+    NAME_EDUCATION_TYPE: 'Higher education',
+    NAME_FAMILY_STATUS: 'Married',
+    NAME_HOUSING_TYPE: 'House apartment',
+    DAYS_BIRTH: calculateDateFromDaysAgo(-20103),
+    DAYS_EMPLOYED: calculateDateFromDaysAgo(-555),
+    FLAG_WORK_PHONE: 0,
+    FLAG_PHONE: 0,
+    FLAG_EMAIL: 0,
+    OCCUPATION_TYPE: 'Security staff',
+    CNT_FAM_MEMBERS: 2,
+    MONTHS_BALANCE: calculateDateFromDaysAgo(-22)
 }
 
 const Credit: FC<ICreditProps> = ({ }) => {
@@ -43,9 +91,12 @@ const Credit: FC<ICreditProps> = ({ }) => {
         NAME_HOUSING_TYPE: null,
         DAYS_BIRTH: null,
         DAYS_EMPLOYED: null,
+        FLAG_WORK_PHONE: null,
+        FLAG_PHONE: null,
+        FLAG_EMAIL: null,
         OCCUPATION_TYPE: null,
         CNT_FAM_MEMBERS: null,
-        ACCOUNT_AGE: null,
+        MONTHS_BALANCE: null
     })
 
     const handleChange = (key: string, value: any): void => {
@@ -63,58 +114,116 @@ const Credit: FC<ICreditProps> = ({ }) => {
 
     console.log(formData)
 
+    const handleFill = (type: 0 | 1) => {
+        if (type === 0) {
+            setFormData(fillData0)
+        } else if (type === 1) {
+            setFormData(fillData1)
+        }
+    }
+
     return (
         <div className={styles._container}>
-            <h1>Phân loại rủi ro tín dụng</h1>
+            <div className={styles._title}>
+                <h1>Phân loại rủi ro tín dụng</h1>
+                <div className={styles._fill}>
+                    <Button
+                        buttonIcon={<HiOutlineCheckCircle />}
+                        buttonIconColor={whiteColor}
+                        buttonIconSize={25}
+                        buttonWidth={38}
+                        buttonHeight={38}
+                        buttonBackground={'linear-gradient(249.1deg, rgba(11,206,250,1) -6.5%, rgba(65,46,248,1) 100.2%)'}
+                        buttonBubbleColor={whiteColor}
+                        onClick={() => handleFill(0)}
+                    />
+                    <Button
+                        buttonIcon={<HiOutlineExclamationTriangle />}
+                        buttonIconColor={whiteColor}
+                        buttonIconSize={25}
+                        buttonWidth={38}
+                        buttonHeight={38}
+                        buttonBackground={'linear-gradient(111.3deg, rgba(252,56,56,1) 11.7%, rgba(237,13,81,1) 81.7%)'}
+                        buttonBubbleColor={whiteColor}
+                        onClick={() => handleFill(1)}
+                    />
+                </div>
+            </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.CODE_GENDER !== null ? daiblColor : redColor }}>Giới tính</strong>
+                    <strong>Giới tính {formData.CODE_GENDER === null && <span>*</span>}</strong>
                     <RadioGroup
                         options={useMemo(() => [
                             { label: 'Nam', value: 'M' },
                             { label: 'Nữ', value: 'F' },
                         ], [])}
+                        value={formData.CODE_GENDER}
                         onChange={value => handleChange('CODE_GENDER', value)}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.FLAG_OWN_CAR !== null ? daiblColor : redColor }}>Sở hữu xe hơi</strong>
+                    <strong>Sở hữu xe hơi {formData.FLAG_OWN_CAR === null && <span>*</span>}</strong>
                     <RadioGroup
                         options={useMemo(() => [
-                            { label: 'Có', value: '1' },
-                            { label: 'Không', value: '0' },
+                            { label: 'Có', value: 'Y' },
+                            { label: 'Không', value: 'N' },
                         ], [])}
+                        value={formData.FLAG_OWN_CAR}
                         onChange={value => handleChange('FLAG_OWN_CAR', value)}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.FLAG_OWN_REALTY !== null ? daiblColor : redColor }}>Sở hữu bất động sản</strong>
+                    <strong>Sở hữu bất động sản {formData.FLAG_OWN_REALTY === null && <span>*</span>}</strong>
                     <RadioGroup
                         options={useMemo(() => [
-                            { label: 'Có', value: '1' },
-                            { label: 'Không', value: '0' },
+                            { label: 'Có', value: 'Y' },
+                            { label: 'Không', value: 'N' },
                         ], [])}
+                        value={formData.FLAG_OWN_REALTY}
                         onChange={value => handleChange('FLAG_OWN_REALTY', value)}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.AMT_INCOME_TOTAL !== null ? daiblColor : redColor }}>Thu nhập hàng năm ($)</strong>
-                    <TextField
-                        height={'fit-content'}
-                        border='none'
-                        focusBorder='none'
-                        onChange={value => handleChange('AMT_INCOME_TOTAL', value)}
-                        padding='0'
-                        placeholder='vd: 3000'
-                        type='number'
+                    <strong>Số điện thoại làm việc {formData.FLAG_WORK_PHONE === null && <span>*</span>}</strong>
+                    <RadioGroup
+                        options={useMemo(() => [
+                            { label: 'Có', value: 1 },
+                            { label: 'Không', value: 0 },
+                        ], [])}
+                        value={formData.FLAG_WORK_PHONE}
+                        onChange={value => handleChange('FLAG_WORK_PHONE', value)}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.NAME_INCOME_TYPE !== null ? daiblColor : redColor }}>Hạng mục thu nhập</strong>
+                    <strong>Số điện thoại cá nhân {formData.FLAG_PHONE === null && <span>*</span>}</strong>
+                    <RadioGroup
+                        options={useMemo(() => [
+                            { label: 'Có', value: 1 },
+                            { label: 'Không', value: 0 },
+                        ], [])}
+                        value={formData.FLAG_PHONE}
+                        onChange={value => handleChange('FLAG_PHONE', value)}
+                    />
+                </div>
+                <div className={styles._col}>
+                    <strong>Email làm việc {formData.FLAG_EMAIL === null && <span>*</span>}</strong>
+                    <RadioGroup
+                        options={useMemo(() => [
+                            { label: 'Có', value: 1 },
+                            { label: 'Không', value: 0 },
+                        ], [])}
+                        value={formData.FLAG_EMAIL}
+                        onChange={value => handleChange('FLAG_EMAIL', value)}
+                    />
+                </div>
+            </div>
+            <div className={styles._row}>
+                <div className={styles._col}>
+                    <strong>Hạng mục thu nhập {formData.NAME_INCOME_TYPE === null && <span>*</span>}</strong>
                     <Select
                         width={'100%'}
                         options={useMemo(() => [
@@ -124,11 +233,12 @@ const Credit: FC<ICreditProps> = ({ }) => {
                             { label: 'Pensioner', value: 'Pensioner' },
                             { label: 'State servant', value: 'State servant' },
                         ], [])}
+                        value={formData.NAME_INCOME_TYPE}
                         onChange={value => handleChange('NAME_INCOME_TYPE', value)}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.NAME_EDUCATION_TYPE !== null ? daiblColor : redColor }}>Trình độ học vấn</strong>
+                    <strong>Trình độ học vấn {formData.NAME_EDUCATION_TYPE === null && <span>*</span>}</strong>
                     <Select
                         width={'100%'}
                         options={useMemo(() => [
@@ -138,13 +248,14 @@ const Credit: FC<ICreditProps> = ({ }) => {
                             { label: 'Incomplete higher', value: 'Incomplete higher' },
                             { label: 'Lower secondary', value: 'Lower secondary' },
                         ], [])}
+                        value={formData.NAME_EDUCATION_TYPE}
                         onChange={value => handleChange('NAME_EDUCATION_TYPE', value)}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.NAME_FAMILY_STATUS !== null ? daiblColor : redColor }}>Tình trạng hôn nhân</strong>
+                    <strong>Tình trạng hôn nhân {formData.NAME_FAMILY_STATUS === null && <span>*</span>}</strong>
                     <Select
                         width={'100%'}
                         options={useMemo(() => [
@@ -155,11 +266,12 @@ const Credit: FC<ICreditProps> = ({ }) => {
                             { label: 'Civil marriage', value: 'Civil marriage' },
                             { label: 'Separated', value: 'Separated' },
                         ], [])}
+                        value={formData.NAME_FAMILY_STATUS}
                         onChange={value => handleChange('NAME_FAMILY_STATUS', value)}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.NAME_HOUSING_TYPE !== null ? daiblColor : redColor }}>Nơi ở</strong>
+                    <strong>Nơi ở {formData.NAME_HOUSING_TYPE === null && <span>*</span>}</strong>
                     <Select
                         width={'100%'}
                         options={useMemo(() => [
@@ -171,79 +283,106 @@ const Credit: FC<ICreditProps> = ({ }) => {
                             { label: 'Rented apartment', value: 'Rented apartment' },
                             { label: 'Co-op apartment', value: 'Co-op apartment' },
                         ], [])}
+                        value={formData.NAME_HOUSING_TYPE}
                         onChange={value => handleChange('NAME_HOUSING_TYPE', value)}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.DAYS_BIRTH !== null ? daiblColor : redColor }}>Ngày sinh</strong>
+                    <strong>Ngày sinh {formData.DAYS_BIRTH === null && <span>*</span>}</strong>
                     <TextField
                         width={'100%'}
                         height={'fit-content'}
                         border='none'
                         focusBorder='none'
+                        value={formData.DAYS_BIRTH}
                         onChange={value => handleChange('DAYS_BIRTH', value)}
                         padding='0'
                         type='date'
+                        max={getCurrentDate()}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.DAYS_EMPLOYED !== null ? daiblColor : redColor }}>Ngày bắt đầu làm việc</strong>
+                    <strong>Ngày bắt đầu làm việc {formData.DAYS_EMPLOYED === null && <span>*</span>}</strong>
                     <TextField
                         width={'100%'}
                         height={'fit-content'}
                         border='none'
                         focusBorder='none'
+                        value={formData.DAYS_EMPLOYED}
                         onChange={value => handleChange('DAYS_EMPLOYED', value)}
                         padding='0'
                         type='date'
+                        max={getCurrentDate()}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.ACCOUNT_AGE !== null ? daiblColor : redColor }}>Ngày tạo tài khoản</strong>
+                    <strong>Ngày tạo tài khoản {formData.MONTHS_BALANCE === null && <span>*</span>}</strong>
                     <TextField
                         width={'100%'}
                         height={'fit-content'}
                         border='none'
                         focusBorder='none'
-                        onChange={value => handleChange('ACCOUNT_AGE', value)}
+                        value={formData.MONTHS_BALANCE}
+                        onChange={value => handleChange('MONTHS_BALANCE', value)}
                         padding='0'
                         type='date'
+                        max={getCurrentDate()}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.CNT_FAM_MEMBERS !== null ? daiblColor : redColor }}>Số lượng thành viên gia đình</strong>
+                    <strong>Thu nhập hàng năm ($) {formData.AMT_INCOME_TOTAL === null && <span>*</span>}</strong>
                     <TextField
-                        width={'100%'}
                         height={'fit-content'}
                         border='none'
                         focusBorder='none'
-                        onChange={value => handleChange('CNT_FAM_MEMBERS', value)}
+                        value={formData.AMT_INCOME_TOTAL}
+                        onChange={value => handleChange('AMT_INCOME_TOTAL', value)}
                         padding='0'
+                        placeholder='vd: 3000'
                         type='number'
-                        placeholder='vd: 3'
+                        min={0}
                     />
                 </div>
             </div>
             <div className={styles._row}>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.CNT_CHILDREN !== null ? daiblColor : redColor }}>Số lượng con cái</strong>
+                    <strong>Số lượng con cái {formData.CNT_CHILDREN === null && <span>*</span>}</strong>
                     <TextField
                         width={'100%'}
                         height={'fit-content'}
                         border='none'
                         focusBorder='none'
+                        value={formData.CNT_CHILDREN}
                         onChange={value => handleChange('CNT_CHILDREN', value)}
                         padding='0'
                         type='number'
                         placeholder='vd: 2'
+                        min={0}
                     />
                 </div>
                 <div className={styles._col}>
-                    <strong style={{ color: formData.OCCUPATION_TYPE !== null ? daiblColor : redColor }}>Nghề nghiệp</strong>
+                    <strong>Số lượng thành viên gia đình {formData.CNT_FAM_MEMBERS === null && <span>*</span>}</strong>
+                    <TextField
+                        width={'100%'}
+                        height={'fit-content'}
+                        border='none'
+                        focusBorder='none'
+                        value={formData.CNT_FAM_MEMBERS}
+                        onChange={value => handleChange('CNT_FAM_MEMBERS', value)}
+                        padding='0'
+                        type='number'
+                        placeholder='vd: 3'
+                        min={0}
+                    />
+                </div>
+            </div>
+            <div className={styles._row}>
+                <div className={styles._col}>
+                    <strong>Nghề nghiệp {formData.OCCUPATION_TYPE === null && <span>*</span>}</strong>
                     <Select
                         width={'100%'}
                         options={useMemo(() => [
@@ -266,6 +405,7 @@ const Credit: FC<ICreditProps> = ({ }) => {
                             { label: 'Waiters/barmen staff', value: 'Waiters/barmen staff' },
                             { label: 'HR staff', value: 'HR staff' },
                         ], [])}
+                        value={formData.OCCUPATION_TYPE}
                         onChange={value => handleChange('OCCUPATION_TYPE', value)}
                     />
                 </div>
@@ -288,4 +428,3 @@ const Credit: FC<ICreditProps> = ({ }) => {
 }
 
 export default Credit
-

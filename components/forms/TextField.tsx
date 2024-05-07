@@ -1,5 +1,5 @@
 'use client'
-import { CSSProperties, ChangeEvent, FC, ReactElement, ReactNode, memo, useRef, useState } from 'react'
+import { CSSProperties, ChangeEvent, FC, ReactElement, ReactNode, memo, useEffect, useRef, useState } from 'react'
 import styles from '@/components/forms/textfield.module.sass'
 
 interface InputCSSProperties extends CSSProperties {
@@ -29,7 +29,9 @@ interface TextFieldProps {
   labelIcon?: ReactNode | ReactElement
   labelIconColor?: string
   labelIconSize?: number
-  value?: string
+  value?: string | number | null
+  max?: number | string
+  min?: number | string
   placeholder?: string
   placeholderSize?: number
   placeholderWeight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
@@ -65,6 +67,8 @@ const TextField: FC<TextFieldProps> = ({
   labelIconColor,
   labelIconSize,
   value,
+  max,
+  min,
   placeholder,
   placeholderSize = 14,
   placeholderWeight = 400,
@@ -75,7 +79,7 @@ const TextField: FC<TextFieldProps> = ({
   focusBorder = '1px solid rgb(39, 142, 255)',
   onChange
 }) => {
-  const [inputValue, setInputValue] = useState<string>(value || '')
+  const [inputValue, setInputValue] = useState<string | number >(value !== 0 ? value || '' : 0)
   const textFieldRef = useRef<HTMLDivElement>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +87,10 @@ const TextField: FC<TextFieldProps> = ({
     setInputValue(newValue)
     onChange(newValue)
   }
+
+  useEffect(() => {
+    setInputValue(value !== 0 ? value || '' : 0)
+  }, [value])
 
   const inputStyles: InputCSSProperties = {
     padding: padding,
@@ -143,6 +151,8 @@ const TextField: FC<TextFieldProps> = ({
         placeholder={placeholder}
         style={inputStyles}
         onChange={handleInputChange}
+        max={max}
+        min={min}
         onFocus={event => {
           focusBorder && (textFieldRef.current!.style.border = focusBorder)
         }}

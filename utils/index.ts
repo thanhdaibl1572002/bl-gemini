@@ -63,3 +63,29 @@ export const daiblResponseText = (responseData: '-2' | '-1' | '0' | '1', text: s
 }
 
 
+export const calculateDaysFromDate = (dateString: string): number => {
+  const currentDate = new Date().getTime()
+  const targetDate = new Date(dateString).getTime()
+  const millisecondsPerDay = 1000 * 60 * 60 * 24
+  const differenceMilliseconds = currentDate - targetDate
+  const differenceDays = Math.floor(differenceMilliseconds / millisecondsPerDay)
+  return -differenceDays
+}
+
+export const calculateDateFromDaysAgo = (daysAgo: number): string => {
+  const currentDate = new Date().getTime()
+  const millisecondsPerDay = 1000 * 60 * 60 * 24
+  const targetDate = new Date(currentDate - Math.abs(daysAgo) * millisecondsPerDay)
+  const year = targetDate.getFullYear()
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0')
+  const day = String(targetDate.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+export const getCurrentDate = (): string => {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
