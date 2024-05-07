@@ -5,13 +5,13 @@ import RadioGroup from '@/components/forms/RadioGroup'
 import TextField from '@/components/forms/TextField'
 import Select from '@/components/forms/Select'
 import Button from '@/components/forms/Button'
-import { PiArrowFatRight, PiCheck } from 'react-icons/pi'
-import { calculateDateFromDaysAgo, calculateDaysFromDate, getCurrentDate } from '@/utils'
-import { RiBardLine } from 'react-icons/ri'
-import { daiblColor, geminiColor, getColorLevel, greenColor, redColor, whiteColor } from '@/variables/variables'
-import { SiNintendogamecube } from 'react-icons/si'
-import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai'
+import { PiArrowFatRight } from 'react-icons/pi'
 import { HiOutlineCheckCircle, HiOutlineExclamationTriangle } from 'react-icons/hi2'
+import { calculateDateFromDaysAgo, calculateDaysFromDate, getCurrentDate } from '@/utils'
+import { blueGradientColor, daiblColor, daiblGradientColor, greenColor, redColor, redGradientColor, whiteColor } from '@/variables/variables'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+
 
 interface ICreditProps {
 
@@ -38,43 +38,43 @@ interface IFormData {
 }
 
 const fillData0: IFormData = {
-    CODE_GENDER: 'F',
+    CODE_GENDER: 'M',
     FLAG_OWN_CAR: 'Y',
     FLAG_OWN_REALTY: 'Y',
     CNT_CHILDREN: 0,
-    AMT_INCOME_TOTAL: 202500.0,
-    NAME_INCOME_TYPE: 'Commercial associate',
+    AMT_INCOME_TOTAL: 135000.0,
+    NAME_INCOME_TYPE: 'Working',
     NAME_EDUCATION_TYPE: 'Secondary / secondary special',
-    NAME_FAMILY_STATUS: 'Separated',
-    NAME_HOUSING_TYPE: 'House \/ apartment',
-    DAYS_BIRTH: calculateDateFromDaysAgo(-18745),
-    DAYS_EMPLOYED: calculateDateFromDaysAgo(-3653),
-    FLAG_WORK_PHONE: 1,
+    NAME_FAMILY_STATUS: 'Married',
+    NAME_HOUSING_TYPE: 'House / apartment',
+    DAYS_BIRTH: calculateDateFromDaysAgo(-21065),
+    DAYS_EMPLOYED: calculateDateFromDaysAgo(-1458),
+    FLAG_WORK_PHONE: 0,
     FLAG_PHONE: 1,
-    FLAG_EMAIL: 1,
-    OCCUPATION_TYPE: 'Cleaning staff',
-    CNT_FAM_MEMBERS: 1.0,
-    MONTHS_BALANCE: calculateDateFromDaysAgo(-26),
+    FLAG_EMAIL: 0,
+    OCCUPATION_TYPE: 'Laborers',
+    CNT_FAM_MEMBERS: 2.0,
+    MONTHS_BALANCE: calculateDateFromDaysAgo(-8)
 }
 
 const fillData1: IFormData = {
-    CODE_GENDER: 'M',
+    CODE_GENDER: 'F',
     FLAG_OWN_CAR: 'N',
-    FLAG_OWN_REALTY: 'N',
-    CNT_CHILDREN: 0,
-    AMT_INCOME_TOTAL: 112500.0,
+    FLAG_OWN_REALTY: 'Y',
+    CNT_CHILDREN: 1,
+    AMT_INCOME_TOTAL: 585000.0,
     NAME_INCOME_TYPE: 'Commercial associate',
     NAME_EDUCATION_TYPE: 'Higher education',
-    NAME_FAMILY_STATUS: 'Married',
-    NAME_HOUSING_TYPE: 'House apartment',
-    DAYS_BIRTH: calculateDateFromDaysAgo(-20103),
-    DAYS_EMPLOYED: calculateDateFromDaysAgo(-555),
+    NAME_FAMILY_STATUS: 'Single / not married',
+    NAME_HOUSING_TYPE: 'House / apartment',
+    DAYS_BIRTH: calculateDateFromDaysAgo(-10430),
+    DAYS_EMPLOYED: calculateDateFromDaysAgo(-900),
     FLAG_WORK_PHONE: 0,
     FLAG_PHONE: 0,
     FLAG_EMAIL: 0,
-    OCCUPATION_TYPE: 'Security staff',
-    CNT_FAM_MEMBERS: 2,
-    MONTHS_BALANCE: calculateDateFromDaysAgo(-22)
+    OCCUPATION_TYPE: 'Managers',
+    CNT_FAM_MEMBERS: 2.0,
+    MONTHS_BALANCE: calculateDateFromDaysAgo(-19)
 }
 
 const Credit: FC<ICreditProps> = ({ }) => {
@@ -108,18 +108,52 @@ const Credit: FC<ICreditProps> = ({ }) => {
         }
     }
 
-    const handleSubmit = (): void => {
+    const handleSubmit = async (): Promise<void> => {
+        const formDataSubmit = {
+            ...formData,
+            DAYS_BIRTH: calculateDaysFromDate(formData.DAYS_BIRTH as string),
+            DAYS_EMPLOYED: calculateDaysFromDate(formData.DAYS_EMPLOYED as string),
+            MONTHS_BALANCE: calculateDaysFromDate(formData.MONTHS_BALANCE as string),
+        }
+        try {
+            const response = await axios.post(`${process.env.daiblServerUrl as string}/credit`, formDataSubmit)
+            if (response.data === 0) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    iconColor: daiblColor,
+                    title: 'Bạn có rủi ro tính dụng THẤP',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Đóng',
+                    confirmButtonColor: daiblColor,
+                    buttonsStyling: true
 
+                })
+            } else if (response.data === 1) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Bạn có rủi ro tính dụng CAO',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Đóng',
+                    confirmButtonColor: redColor,
+                    focusConfirm: false
+                })
+            }
+        } catch (error) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Có lỗi xảy ra',
+                showConfirmButton: true,
+                confirmButtonText: 'Đóng',
+                confirmButtonColor: redColor,
+            })
+        }
     }
 
-    console.log(formData)
-
     const handleFill = (type: 0 | 1) => {
-        if (type === 0) {
-            setFormData(fillData0)
-        } else if (type === 1) {
-            setFormData(fillData1)
-        }
+        type === 0 ? setFormData(fillData0) : setFormData(fillData1)
     }
 
     return (
@@ -133,7 +167,7 @@ const Credit: FC<ICreditProps> = ({ }) => {
                         buttonIconSize={25}
                         buttonWidth={38}
                         buttonHeight={38}
-                        buttonBackground={'linear-gradient(249.1deg, rgba(11,206,250,1) -6.5%, rgba(65,46,248,1) 100.2%)'}
+                        buttonBackground={blueGradientColor}
                         buttonBubbleColor={whiteColor}
                         onClick={() => handleFill(0)}
                     />
@@ -143,7 +177,7 @@ const Credit: FC<ICreditProps> = ({ }) => {
                         buttonIconSize={25}
                         buttonWidth={38}
                         buttonHeight={38}
-                        buttonBackground={'linear-gradient(111.3deg, rgba(252,56,56,1) 11.7%, rgba(237,13,81,1) 81.7%)'}
+                        buttonBackground={redGradientColor}
                         buttonBubbleColor={whiteColor}
                         onClick={() => handleFill(1)}
                     />

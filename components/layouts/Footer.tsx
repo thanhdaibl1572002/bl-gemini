@@ -40,7 +40,7 @@ const Footer: FC<IFooterProps> = ({
         dispatch(addNewMessage({ role: 'user', message: text }))
         await set(push(messageRef), { role: 'user', message: text })
         dispatch(addNewMessage({ role: 'ai', message: '' }))
-        const response = await axios.post(process.env.daiblServerUrl as string, { comment: text })
+        const response = await axios.post(`${process.env.daiblServerUrl as string}/sentiment`, { comment: text })
         const responseData = response.data.toString()
         const responseText = daiblResponseText(responseData, text)
         let charIndex = 0
