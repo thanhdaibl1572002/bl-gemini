@@ -1,5 +1,5 @@
 'use client'
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import styles from '@/app/credit/creadit.module.sass'
 import RadioGroup from '@/components/forms/RadioGroup'
 import TextField from '@/components/forms/TextField'
@@ -8,7 +8,7 @@ import Button from '@/components/forms/Button'
 import { PiArrowFatRight } from 'react-icons/pi'
 import { HiOutlineCheckCircle, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 import { calculateDateFromDaysAgo, calculateDaysFromDate, getCurrentDate } from '@/utils'
-import { blueGradientColor, daiblColor, daiblGradientColor, greenColor, redColor, redGradientColor, whiteColor } from '@/variables/variables'
+import { blackColor, blueGradientColor, daiblColor, redColor, redGradientColor, whiteColor } from '@/variables/variables'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
@@ -99,6 +99,30 @@ const Credit: FC<ICreditProps> = ({ }) => {
         MONTHS_BALANCE: null
     })
 
+    const [loading, setLoading] = useState<boolean>(false)
+    const [result, setResult] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (result !== null) {
+            const swalIcon = loading ? 'question' : result === 0 ? 'success' : 'error'
+            const swalIconColor = loading ? blackColor : result === 0 ? daiblColor : redColor
+            const swalTitle = loading ? 'Đang Phân Loại' : result === 0 ? 'Bạn Có Rủi Ro Tín Dụng THẤP' : 'Bạn Có Rủi Ro Tín Dụng CAO'
+            const swalConfirmButtonColor = loading ? blackColor : result === 0 ? daiblColor : redColor
+            Swal.fire({
+                position: 'center',
+                icon: swalIcon,
+                iconColor: swalIconColor,
+                title: swalTitle,
+                showConfirmButton: true,
+                confirmButtonText: 'Đóng',
+                confirmButtonColor: swalConfirmButtonColor,
+                didOpen: () => {
+                    loading && Swal.showLoading()
+                },
+            })
+        }
+    }, [loading, result])
+
     const handleChange = (key: string, value: any): void => {
         if (value !== undefined && value !== '') {
             setFormData(prevFormData => ({
@@ -109,6 +133,8 @@ const Credit: FC<ICreditProps> = ({ }) => {
     }
 
     const handleSubmit = async (): Promise<void> => {
+        setLoading(true)
+        setResult(-1)
         const formDataSubmit = {
             ...formData,
             DAYS_BIRTH: calculateDaysFromDate(formData.DAYS_BIRTH as string),
@@ -117,30 +143,12 @@ const Credit: FC<ICreditProps> = ({ }) => {
         }
         try {
             const response = await axios.post(`${process.env.daiblServerUrl as string}/credit`, formDataSubmit)
-            if (response.data === 0) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    iconColor: daiblColor,
-                    title: 'Bạn có rủi ro tính dụng THẤP',
-                    showConfirmButton: true,
-                    confirmButtonText: 'Đóng',
-                    confirmButtonColor: daiblColor,
-                    buttonsStyling: true
-
-                })
-            } else if (response.data === 1) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Bạn có rủi ro tính dụng CAO',
-                    showConfirmButton: true,
-                    confirmButtonText: 'Đóng',
-                    confirmButtonColor: redColor,
-                    focusConfirm: false
-                })
-            }
+            setTimeout(() => {
+                setLoading(false)
+                setResult(response.data)
+            }, 1500)
         } catch (error) {
+            setLoading(false)
             Swal.fire({
                 position: 'center',
                 icon: 'error',
