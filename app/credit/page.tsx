@@ -67,14 +67,14 @@ const fillData1: IFormData = {
     NAME_EDUCATION_TYPE: 'Higher education',
     NAME_FAMILY_STATUS: 'Single / not married',
     NAME_HOUSING_TYPE: 'House / apartment',
-    DAYS_BIRTH: calculateDateFromDaysAgo(-10429),
-    DAYS_EMPLOYED: calculateDateFromDaysAgo(-899),
+    DAYS_BIRTH: calculateDateFromDaysAgo(-10430),
+    DAYS_EMPLOYED: calculateDateFromDaysAgo(-900),
     FLAG_WORK_PHONE: 0,
     FLAG_PHONE: 0,
     FLAG_EMAIL: 0,
     OCCUPATION_TYPE: 'Managers',
     CNT_FAM_MEMBERS: 2.0,
-    MONTHS_BALANCE: calculateDateFromDaysAgo(-18)
+    MONTHS_BALANCE: calculateDateFromDaysAgo(-19)
 }
 
 const Credit: FC<ICreditProps> = ({ }) => {
